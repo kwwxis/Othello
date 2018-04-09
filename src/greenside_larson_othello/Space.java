@@ -5,15 +5,16 @@
  */
 package greenside_larson_othello;
 
+import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
+
 /**
  * @author Trevor Greenside
  */
-public class Space {
-    
-    // note: modify to extend a relevant class, maybe shape?
-    
+public class Space extends Label {
     public Space() {
-        
+        this.setStyle("-fx-border-color: black; -fx-background-color: white;");
+        this.setHeight(50);
+        this.setWidth(50);
     }
-    
 }

@@ -13,10 +13,25 @@ import javafx.scene.layout.GridPane;
  */
 public class Board extends GridPane {
     
-    private Space[] spaces;
+    private Space[][] spaces;
+    private static int DIMENSION;
     
-    public Board() {
+    public Board(int numSpaces) {
+        DIMENSION = numSpaces;
+        spaces = new Space[DIMENSION][DIMENSION];
         
+        addSpaces();
+    }
+    
+    @SuppressWarnings("static-access")
+    private void addSpaces() {
+        for (int i = 0; i < DIMENSION; i++) {
+            for (int j = 0; j < DIMENSION; j++) {
+                spaces[i][j] = new Space();
+                this.setConstraints(spaces[i][j], j, i);
+                this.getChildren().addAll(spaces[i][j]);
+            }
+        }
     }
     
 }

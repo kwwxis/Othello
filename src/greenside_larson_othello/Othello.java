@@ -9,7 +9,8 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -19,12 +20,22 @@ import javafx.stage.Stage;
  */
 public class Othello extends Application {
     
+    private Board board;
+    
     @Override
     public void start(Stage primaryStage) {
         
-        Board root = new Board();
+        StackPane root = new StackPane();
+        BorderPane players = new BorderPane();
         
-        Scene scene = new Scene(root, 300, 250);
+        Player human = new Player("De Palma");
+        players.setLeft(human);
+        
+        board = new Board(8);
+        
+        root.getChildren().add(players);
+        root.getChildren().add(board);
+        Scene scene = new Scene(root, 750, 675);
         
         primaryStage.setTitle("Othello - Greenside & Larson");
         primaryStage.setScene(scene);
