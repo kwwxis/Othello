@@ -17,26 +17,16 @@ import javafx.stage.Stage;
  *
  * @author Trevor Greenside
  */
-public class Greenside_Larson_Othello extends Application {
+public class Othello extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        Button btn = new Button();
-        btn.setText("Say 'Hello World'");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
-            }
-        });
         
-        StackPane root = new StackPane();
-        root.getChildren().add(btn);
+        Board root = new Board();
         
         Scene scene = new Scene(root, 300, 250);
         
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("Othello - Greenside & Larson");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
