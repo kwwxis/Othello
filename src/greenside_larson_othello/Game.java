@@ -18,6 +18,7 @@ public class Game extends VBox {
     private BorderPane players;
     private Player human;
     private Player skynet;
+    private GameTimer gameTimer;
     
     public Game() {
         players = new BorderPane();
@@ -25,13 +26,15 @@ public class Game extends VBox {
         human = new Player("De Palma");
         players.setLeft(human);
         
-        board = new Board(8);
+        board = new Board(8, gameTimer);
+        
+        gameTimer = new GameTimer(10, board);
         
         addComponents();
     }
     
     private void addComponents() {
-        this.getChildren().addAll(players, board);
+        this.getChildren().addAll(players, board, gameTimer);
     }
     
 }

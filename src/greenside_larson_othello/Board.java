@@ -16,10 +16,11 @@ public class Board extends GridPane {
     
     private static int DIMENSION;
     private final Space[][] spaces;
+    private GameTimer gameTimer;
     
     private boolean stopped;
     
-    public Board(int numSpaces) {
+    public Board(int numSpaces, GameTimer timer) {
         DIMENSION = numSpaces;
         spaces = new Space[DIMENSION][DIMENSION];
         
@@ -31,9 +32,7 @@ public class Board extends GridPane {
             }
         }
         
-        // create timer
-        stopped = false;
-        GameTimer time = new GameTimer(10, this);
+        this.gameTimer = timer; // to reset
     }
     
     /**
