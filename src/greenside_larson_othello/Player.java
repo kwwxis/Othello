@@ -16,15 +16,28 @@ public class Player extends BorderPane {
     
     private final String playerName;
     private final Label playerLabel;
+    private int score;
+    private Label scoreLabel;
     
     public Player(String name) {
         this.playerName = name;
         this.playerLabel = new Label(this.playerName);
+        this.score = 0;
+        this.scoreLabel = new Label(Integer.toString(this.score));
+        
         addComponents();
     }
     
     private void addComponents() {
+        this.setHeight(50);
+        this.setWidth(150);
+        
         this.setLeft(playerLabel);
+    }
+    
+    public void updateScore(int newPts) {
+        this.score += newPts;
+        scoreLabel.setText(Integer.toString(this.score));
     }
     
 }

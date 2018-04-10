@@ -14,11 +14,18 @@ import javafx.scene.shape.Rectangle;
  * @author Trevor Greenside
  */
 public class Space extends Rectangle {
+    
+    private boolean clicked;
+    
     public Space() {
+        this.clicked = false;
+        
         this.setHeight(75);
         this.setWidth(75);
-        this.setStroke(Color.BLACK);
-        this.setFill(Color.WHITE);
+        this.setStroke(Color.GRAY);
+        this.setFill(Color.GREEN);
+        
+        // not called with current setup, may relocate to Board class
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -29,5 +36,10 @@ public class Space extends Rectangle {
     
     public void transition() {
         this.setFill(Color.BLACK);
+        this.clicked = true;
+    }
+    
+    public boolean isClicked() {
+        return this.clicked;
     }
 }

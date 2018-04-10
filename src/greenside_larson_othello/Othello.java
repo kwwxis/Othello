@@ -17,20 +17,11 @@ import javafx.stage.Stage;
  */
 public class Othello extends Application {
     
-    private Board board;
-    
     @Override
     public void start(Stage primaryStage) {
         
-        VBox root = new VBox();
-        BorderPane players = new BorderPane();
+        Game root = new Game();
         
-        Player human = new Player("De Palma");
-        players.setLeft(human);
-        
-        board = new Board(8);
-        
-        root.getChildren().addAll(players, board);
         Scene scene = new Scene(root, 750, 675);
         
         primaryStage.setTitle("Othello - Greenside & Larson");

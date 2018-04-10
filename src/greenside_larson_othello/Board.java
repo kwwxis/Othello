@@ -7,7 +7,6 @@ package greenside_larson_othello;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -16,18 +15,35 @@ import javafx.scene.shape.Rectangle;
 public class Board extends GridPane {
     
     private static int DIMENSION;
-    private final Rectangle[][] spaces;
+    private final Space[][] spaces;
+    
+    private boolean stopped;
     
     public Board(int numSpaces) {
         DIMENSION = numSpaces;
-        spaces = new Rectangle[DIMENSION][DIMENSION];
-        this.setHeight(800);
-        this.setWidth(800);
+        spaces = new Space[DIMENSION][DIMENSION];
+        
         addSpaces();
+        
+        for (int i = 0; i < DIMENSION; i++) {
+            for (int j = 0; j < DIMENSION; j++) {
+                this.spaces[i][j].setOnMouseClicked(new BoardEventHandler(spaces[i][j]));
+            }
+        }
+        
+        // create timer
+        stopped = false;
+        GameTimer time = new GameTimer(10, this);
     }
     
+    /**
+     * This method populates the board with GUI components.
+     */
     @SuppressWarnings("static-access")
     private void addSpaces() {
+        // set board dimensions
+        this.setHeight(600);
+        this.setWidth(600);
         
         // create row and column labels
         // row labels:
@@ -59,4 +75,7 @@ public class Board extends GridPane {
         }
     }
     
+    public void outOfTime() {
+        
+    }
 }
