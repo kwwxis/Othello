@@ -5,16 +5,29 @@
  */
 package greenside_larson_othello;
 
-import javafx.scene.control.Label;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * @author Trevor Greenside
  */
-public class Space extends Label {
+public class Space extends Rectangle {
     public Space() {
-        this.setStyle("-fx-border-color: black; -fx-background-color: white;");
-        this.setHeight(50);
-        this.setWidth(50);
+        this.setHeight(75);
+        this.setWidth(75);
+        this.setStroke(Color.BLACK);
+        this.setFill(Color.WHITE);
+        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                transition();
+            }
+        });
+    }
+    
+    public void transition() {
+        this.setFill(Color.BLACK);
     }
 }

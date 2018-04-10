@@ -6,12 +6,9 @@
 package greenside_larson_othello;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -25,7 +22,7 @@ public class Othello extends Application {
     @Override
     public void start(Stage primaryStage) {
         
-        StackPane root = new StackPane();
+        VBox root = new VBox();
         BorderPane players = new BorderPane();
         
         Player human = new Player("De Palma");
@@ -33,8 +30,7 @@ public class Othello extends Application {
         
         board = new Board(8);
         
-        root.getChildren().add(players);
-        root.getChildren().add(board);
+        root.getChildren().addAll(players, board);
         Scene scene = new Scene(root, 750, 675);
         
         primaryStage.setTitle("Othello - Greenside & Larson");
