@@ -24,19 +24,17 @@ public class GameTimer extends Label {
     private static int START;
     private int remaining;
     private Board board;
-    private Timeline decrementer;
+    private final Timeline decrementer;
     
     public GameTimer(int startTime, Board inBoard) {
         
+        this.board = inBoard;
         GameTimer.START = startTime;
         this.setText("Time: " + Integer.toString(START));
         this.remaining = START;
         
-        decrementer = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                timeDecrement();
-            }
+        decrementer = new Timeline(new KeyFrame(Duration.seconds(1), (ActionEvent event) -> {
+            timeDecrement();
         }));
         decrementer.setCycleCount(Timeline.INDEFINITE);
         decrementer.play();
@@ -53,6 +51,7 @@ public class GameTimer extends Label {
         this.setText("Time: " + Integer.toString(remaining));
         if (remaining == 0) {
             decrementer.stop();
+            board.outOfTime();
         }
     }
     

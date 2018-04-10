@@ -14,17 +14,19 @@ import javafx.scene.layout.VBox;
  */
 public class Game extends VBox {
     
-    private Board board;
-    private BorderPane players;
-    private Player human;
-    private Player skynet;
+    private final Board board;
+    private final BorderPane players;
+    private final Player human;
+    private final Player skynet;
     private GameTimer gameTimer;
     
     public Game() {
         players = new BorderPane();
         
         human = new Player("De Palma");
+        skynet = new Player("A.I.");
         players.setLeft(human);
+        players.setRight(skynet);
         
         board = new Board(8, gameTimer);
         

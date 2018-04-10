@@ -28,11 +28,12 @@ public class Board extends GridPane {
         
         for (int i = 0; i < DIMENSION; i++) {
             for (int j = 0; j < DIMENSION; j++) {
-                this.spaces[i][j].setOnMouseClicked(new BoardEventHandler(spaces[i][j]));
+                this.spaces[i][j].setOnMouseClicked(new BoardEventHandler(spaces[i][j], this));
             }
         }
         
         this.gameTimer = timer; // to reset
+        this.stopped = false;
     }
     
     /**
@@ -75,6 +76,10 @@ public class Board extends GridPane {
     }
     
     public void outOfTime() {
-        
+        this.stopped = true;
+    }
+    
+    public boolean isStopped() {
+        return this.stopped;
     }
 }

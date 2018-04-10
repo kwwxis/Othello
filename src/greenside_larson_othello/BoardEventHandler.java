@@ -13,16 +13,20 @@ import javafx.scene.input.MouseEvent;
  * @author Trevor Greenside
  */
 public class BoardEventHandler implements EventHandler<MouseEvent> {
-    private Space space;
+    private final Space space;
+    private final Board board;
     
-    public BoardEventHandler(Space space) {
+    public BoardEventHandler(Space space, Board board) {
         this.space = space;
+        this.board = board;
     }
     
     @Override
     public void handle(MouseEvent event) {
-        System.out.println("This is doing shit");
-        space.transition();
+        if (!board.isStopped()) {
+            System.out.println("This is doing shit");
+            space.transition();
+        } 
     }
     
 }
