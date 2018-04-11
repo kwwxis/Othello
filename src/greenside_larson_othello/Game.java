@@ -5,7 +5,9 @@
  */
 package greenside_larson_othello;
 
-import javafx.scene.layout.BorderPane;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -15,28 +17,38 @@ import javafx.scene.layout.VBox;
 public class Game extends VBox {
     
     private final Board board;
-    private final BorderPane players;
+    private final FlowPane players;
     private final Player human;
     private final Player skynet;
     private GameTimer gameTimer;
+    private final Button undo;
     
     public Game() {
-        players = new BorderPane();
+        players = new FlowPane();
         
         human = new Player("De Palma");
         skynet = new Player("A.I.");
-        players.setLeft(human);
-        players.setRight(skynet);
+        players.getChildren().addAll(human, skynet);
+        players.setHgap(50);
         
         board = new Board(8, gameTimer);
         
         gameTimer = new GameTimer(10, board);
         
+        undo = new Button("Undo");
+        undo.setOnAction((ActionEvent e) -> {
+            System.out.println("Undo button clicked");
+        });
+        
         addComponents();
     }
     
     private void addComponents() {
-        this.getChildren().addAll(players, board, gameTimer);
+        this.setMaxWidth(600);
+        this.setHeight(800);
+        FlowPane buttons = new FlowPane();
+        buttons.getChildren().addAll(undo);
+        this.getChildren().addAll(players, board, gameTimer, buttons);
     }
     
 }

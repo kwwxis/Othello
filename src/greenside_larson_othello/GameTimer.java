@@ -6,13 +6,9 @@
 package greenside_larson_othello;
 
 import javafx.scene.control.Label;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.util.Duration;
 
 /**

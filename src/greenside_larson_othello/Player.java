@@ -17,11 +17,11 @@ public class Player extends BorderPane {
     private final String playerName;
     private final Label playerLabel;
     private int score;
-    private Label scoreLabel;
+    private final Label scoreLabel;
     
     public Player(String name) {
         this.playerName = name;
-        this.playerLabel = new Label(this.playerName);
+        this.playerLabel = new Label(this.playerName + " \t score: ");
         this.score = 0;
         this.scoreLabel = new Label(Integer.toString(this.score));
         
@@ -33,11 +33,12 @@ public class Player extends BorderPane {
         this.setWidth(150);
         
         this.setLeft(playerLabel);
+        this.setRight(scoreLabel);
     }
     
     public void updateScore(int newPts) {
         this.score += newPts;
-        scoreLabel.setText(Integer.toString(this.score));
+        this.scoreLabel.setText(Integer.toString(this.score));
     }
     
 }
