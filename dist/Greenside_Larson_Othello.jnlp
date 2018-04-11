@@ -8,11 +8,11 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Greenside_Larson_Othello.jar" size="8685" download="eager" />
+    <jar href="Greenside_Larson_Othello.jar" size="12021" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Greenside_Larson_Othello" >
     <param name="requiredFXVersion" value="8.0+"/>
   </applet-desc>
-  <jfx:javafx-desc  width="800" height="600" main-class="greenside_larson_othello.Othello"  name="Greenside_Larson_Othello" />
+  <jfx:javafx-desc  width="800" height="600" main-class="greenside_larson_Lee_othello.Othello"  name="Greenside_Larson_Othello" />
   <update check="always"/>
 </jnlp>

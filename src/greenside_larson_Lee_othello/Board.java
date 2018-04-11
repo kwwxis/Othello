@@ -16,11 +16,13 @@ public class Board extends GridPane {
     
     private static int DIMENSION;
     private final Space[][] spaces;
-    private GameTimer gameTimer;
+    private final GameTimer gameTimer;
+    private final Game game;
     
     private boolean stopped;
     
-    public Board(int numSpaces, GameTimer timer) {
+    public Board(int numSpaces, GameTimer timer, Game game) {
+        this.game = game;
         DIMENSION = numSpaces;
         spaces = new Space[DIMENSION][DIMENSION];
         
@@ -81,5 +83,10 @@ public class Board extends GridPane {
     
     public boolean isStopped() {
         return this.stopped;
+    }
+    
+    public void pauseTime() {
+        // !!!!! Nullptr exception, does not reach gameTimer
+        game.pauseTime();
     }
 }

@@ -7,6 +7,7 @@ package greenside_larson_Lee_othello;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -18,13 +19,20 @@ public class Player extends BorderPane {
     private final Label playerLabel;
     private int score;
     private final Label scoreLabel;
+    private final Color color;
     
-    public Player(String name) {
+    public Player(String name, Color colorChoice) {
         this.playerName = name;
-        this.playerLabel = new Label(this.playerName + " \t score: ");
         this.score = 0;
         this.scoreLabel = new Label(Integer.toString(this.score));
         
+        if (colorChoice == Color.BLACK) {
+            this.color = Color.BLACK;
+            this.playerLabel = new Label(this.playerName + " (black)\t score: ");
+        } else {
+            this.color = Color.WHITE;
+            this.playerLabel = new Label(this.playerName + " (white)\t score: ");
+        }
         addComponents();
     }
     

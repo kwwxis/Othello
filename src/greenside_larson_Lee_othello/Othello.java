@@ -6,9 +6,9 @@
 package greenside_larson_Lee_othello;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -20,12 +20,16 @@ public class Othello extends Application {
     @Override
     public void start(Stage primaryStage) {
         
-        Game root = new Game();
+        PlayerStart theStart = new PlayerStart();
+        theStart.startButton.setOnAction((ActionEvent e) -> {
+            String playername = theStart.getPlayerName();
+            Color color = theStart.getColor();
+            startGame(primaryStage, playername, color); 
+        });
         
-        Scene scene = new Scene(root, 750, 675);
-        
+        Scene startMenu = new Scene(theStart, 200, 300);
         primaryStage.setTitle("Othello - Greenside & Larson");
-        primaryStage.setScene(scene);
+        primaryStage.setScene(startMenu);
         primaryStage.show();
     }
 
@@ -36,4 +40,12 @@ public class Othello extends Application {
         launch(args);
     }
     
+    private void startGame(Stage primaryStage, String playername, Color color) {
+        Game root = new Game(playername, color);
+        
+        Scene scene = new Scene(root, 750, 675);
+        
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 }

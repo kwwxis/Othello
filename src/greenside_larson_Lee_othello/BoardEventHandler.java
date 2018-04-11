@@ -24,7 +24,7 @@ public class BoardEventHandler implements EventHandler<MouseEvent> {
     @Override
     public void handle(MouseEvent event) {
         if (!board.isStopped()) {
-            System.out.println("This is doing shit");
+            board.pauseTime();
             space.transition();
         } 
     }

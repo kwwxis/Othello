@@ -42,4 +42,6 @@ public class Space extends Rectangle {
     public boolean isClicked() {
         return this.clicked;
     }
+    
+    
 }

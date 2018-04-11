@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -22,25 +23,34 @@ public class Game extends VBox {
     private final Player skynet;
     private GameTimer gameTimer;
     private final Button undo;
+    private final AI ai;
     
-    public Game() {
+    public Game(String player1name, Color player1Color) {
+        ai = new AI(this);
         players = new FlowPane();
         
-        human = new Player("De Palma");
-        skynet = new Player("A.I.");
+        // override these values with PlayerStart
+        human = new Player(player1name, player1Color);
+        if (player1Color == Color.BLACK)
+            skynet = new Player("Computer", Color.WHITE);
+        else
+            skynet = new Player("Computer", Color.BLACK);
+        
         players.getChildren().addAll(human, skynet);
+        
         players.setHgap(50);
         
-        board = new Board(8, gameTimer);
+        board = new Board(8, gameTimer, this);
         
         gameTimer = new GameTimer(10, board);
         
         undo = new Button("Undo");
         undo.setOnAction((ActionEvent e) -> {
-            System.out.println("Undo button clicked");
+            ai.rewind();
         });
         
         addComponents();
+        
     }
     
     private void addComponents() {
@@ -51,4 +61,15 @@ public class Game extends VBox {
         this.getChildren().addAll(players, board, gameTimer, buttons);
     }
     
+    public void pauseTime() {
+        gameTimer.timePause();
+    }
+    
+    public void initBoard() {
+        // display pop-up window to determine which player will be white
+        // and which will be black. Black moves first. Human will choose,
+        // Black is the other color.
+        
+        System.out.println("Init board method incomplete");
+    }
 }

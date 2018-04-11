@@ -10,7 +10,15 @@ package greenside_larson_Lee_othello;
  * @author Trevor Greenside
  */
 public class AI {
-    public AI() {
-        
+    
+    private Game game;
+    
+    public AI(Game game) {
+        this.game = game;
+        game.initBoard();
+    }
+    
+    public void rewind() {
+        System.out.println("Removing last move");
     }
 }

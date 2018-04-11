@@ -19,7 +19,7 @@ public class GameTimer extends Label {
     
     private static int START;
     private int remaining;
-    private Board board;
+    private final Board board;
     private final Timeline decrementer;
     
     public GameTimer(int startTime, Board inBoard) {
@@ -51,4 +51,7 @@ public class GameTimer extends Label {
         }
     }
     
+    public void timePause() {
+        this.decrementer.stop();
+    }
 }
