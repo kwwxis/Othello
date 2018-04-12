@@ -45,8 +45,11 @@ public class Player extends BorderPane {
     }
     
     public void updateScore(int newPts) {
-        this.score += newPts;
+        this.score = newPts;
         this.scoreLabel.setText(Integer.toString(this.score));
     }
     
+    public Color getColor() {
+        return color;
+    }
 }

@@ -7,6 +7,7 @@ package greenside_larson_Lee_othello;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -24,8 +25,10 @@ public class Game extends VBox {
     private GameTimer gameTimer;
     private final Button undo;
     private final AI ai;
+    private boolean playerTurn;
+    private Label currentTurn;
     
-    public Game(String player1name, Color player1Color) {
+    public Game(String player1name, Color player1Color, Boolean isConfigWBWB) {
         ai = new AI(this);
         players = new FlowPane();
         
@@ -37,7 +40,6 @@ public class Game extends VBox {
             skynet = new Player("Computer", Color.BLACK);
         
         players.getChildren().addAll(human, skynet);
-        
         players.setHgap(50);
         
         board = new Board(8, gameTimer, this);
@@ -51,6 +53,15 @@ public class Game extends VBox {
         
         addComponents();
         
+        board.setInitialConfig(isConfigWBWB);
+        if (human.getColor() == Color.BLACK)
+            playerTurn = true;
+        else
+            playerTurn = false;
+        
+        currentTurn = new Label("");
+        this.calcScore();
+        this.showCurrentTurn();
     }
     
     private void addComponents() {
@@ -65,11 +76,40 @@ public class Game extends VBox {
         gameTimer.timePause();
     }
     
+    public void nextTurn() {
+        gameTimer.timeReset();
+        this.calcScore();
+        this.playerTurn = !this.playerTurn;
+        this.showCurrentTurn();
+    }
+    
+    public void resume() {
+        gameTimer.timeResume();
+    }
+    
     public void initBoard() {
         // display pop-up window to determine which player will be white
         // and which will be black. Black moves first. Human will choose,
         // Black is the other color.
         
         System.out.println("Init board method incomplete");
+    }
+    
+    public void showCurrentTurn() {
+        if (playerTurn)
+            currentTurn.setText("human's turn");
+    }
+    
+    public void calcScore() {
+        int whiteScore = board.calcWhiteScore();
+        int blackScore = board.calcBlackScore();
+        System.out.println("White score: " + whiteScore);
+        if (human.getColor().equals(Color.BLACK)) {
+            human.updateScore(blackScore);
+            skynet.updateScore(whiteScore);
+        } else {
+            human.updateScore(whiteScore);
+            skynet.updateScore(blackScore);
+        }
     }
 }

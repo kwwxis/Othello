@@ -37,9 +37,14 @@ public class GameTimer extends Label {
         
     }
     
-    private void timeReset() {
+    public void timeReset() {
         remaining = START;
         this.setText("Time: " + Integer.toString(START));
+        this.decrementer.play();
+    }
+    
+    public void timeResume() {
+        this.decrementer.play();
     }
     
     private void timeDecrement() {
@@ -54,4 +59,5 @@ public class GameTimer extends Label {
     public void timePause() {
         this.decrementer.stop();
     }
+     
 }

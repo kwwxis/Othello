@@ -25,6 +25,8 @@ public class PlayerStart extends VBox {
     private final Label getNameLabel;
     private final ToggleGroup playerSelect;
     private Color chosenColor;
+    private final ToggleGroup configSelect;
+    private boolean isConfigWBWB;
     
     public Button startButton;
     
@@ -45,8 +47,24 @@ public class PlayerStart extends VBox {
             chosenColor = Color.WHITE;
         });
         
+        // choose initial config
+        isConfigWBWB = true;
+        configSelect = new ToggleGroup();
+        RadioButton config1 = new RadioButton("[W B]\n[B W]");
+        config1.setToggleGroup(configSelect);
+        config1.setSelected(true);
+        config1.setOnAction((ActionEvent e) -> {
+            isConfigWBWB = true;
+        });
+        RadioButton config2 = new RadioButton("[B W]\n[W B]");
+        config2.setToggleGroup(configSelect);
+        config2.setSelected(true);
+        config2.setOnAction((ActionEvent e) -> {
+            isConfigWBWB = false;
+        });
+        
         startButton = new Button("Start");
-        this.getChildren().addAll(getNameLabel, getName, rb1, rb2, startButton);
+        this.getChildren().addAll(getNameLabel, getName, rb1, rb2, config1, config2, startButton);
     }
     
     public String getPlayerName() {
@@ -55,5 +73,9 @@ public class PlayerStart extends VBox {
     
     public Color getColor() {
         return chosenColor;
+    }
+    
+    public boolean getIsConfigWBWB() {
+        return isConfigWBWB;
     }
 }

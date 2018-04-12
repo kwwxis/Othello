@@ -16,6 +16,7 @@ import javafx.scene.shape.Rectangle;
 public class Space extends Rectangle {
     
     private boolean clicked;
+    private String color;
     
     public Space() {
         this.clicked = false;
@@ -24,6 +25,7 @@ public class Space extends Rectangle {
         this.setWidth(75);
         this.setStroke(Color.GRAY);
         this.setFill(Color.GREEN);
+        this.color = "green";
         
         // not called with current setup, may relocate to Board class
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -35,7 +37,8 @@ public class Space extends Rectangle {
     }
     
     public void transition() {
-        this.setFill(Color.BLACK);
+        this.setFill(Color.YELLOW);
+        this.color = "yellow";
         this.clicked = true;
     }
     
@@ -43,5 +46,22 @@ public class Space extends Rectangle {
         return this.clicked;
     }
     
+    public void setBlack() {
+        this.setFill(Color.BLACK);
+        this.color = "black";
+    }
     
+    public void setWhite() {
+        this.setFill(Color.WHITE);
+        this.color = "white";
+    }
+    
+    public void reset() {
+        this.setFill(Color.GREEN);
+        this.color = "green";
+    }
+    
+    public String getColor() {
+        return this.color;
+    }
 }

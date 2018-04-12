@@ -26,6 +26,7 @@ public class BoardEventHandler implements EventHandler<MouseEvent> {
         if (!board.isStopped()) {
             board.pauseTime();
             space.transition();
+            ConfirmMove confirm = new ConfirmMove(board, space);
         } 
     }
     

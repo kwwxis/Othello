@@ -77,6 +77,20 @@ public class Board extends GridPane {
         }
     }
     
+    public void setInitialConfig(Boolean isConfigWBWB) {
+        if (isConfigWBWB) {
+            spaces[3][3].setWhite();
+            spaces[4][4].setWhite();
+            spaces[3][4].setBlack();
+            spaces[4][3].setBlack();
+        } else {
+            spaces[3][3].setBlack();
+            spaces[4][4].setBlack();
+            spaces[3][4].setWhite();
+            spaces[4][3].setWhite(); 
+        }
+    }
+    
     public void outOfTime() {
         this.stopped = true;
     }
@@ -89,4 +103,35 @@ public class Board extends GridPane {
         // !!!!! Nullptr exception, does not reach gameTimer
         game.pauseTime();
     }
+    
+    public void resume() {
+        game.resume();
+    }
+    
+    public void nextTurn() {
+        game.nextTurn();
+    }
+    
+    public int calcWhiteScore() {
+        int score = 0;
+        for (int i = 0; i < DIMENSION; i++) {
+            for (int j = 0; j < DIMENSION; j++) {
+                if(spaces[i][j].getColor() == "white")
+                    score++;
+            }
+        }
+        return score;
+    }
+    
+    public int calcBlackScore() {
+        int score = 0;
+        for (int i = 0; i < DIMENSION; i++) {
+            for (int j = 0; j < DIMENSION; j++) {
+                if(spaces[i][j].getColor() == "black")
+                    score++;
+            }
+        }
+        return score;
+    }
+    
 }

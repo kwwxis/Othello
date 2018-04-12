@@ -24,7 +24,8 @@ public class Othello extends Application {
         theStart.startButton.setOnAction((ActionEvent e) -> {
             String playername = theStart.getPlayerName();
             Color color = theStart.getColor();
-            startGame(primaryStage, playername, color); 
+            Boolean isConfigWBWB = theStart.getIsConfigWBWB();
+            startGame(primaryStage, playername, color, isConfigWBWB); 
         });
         
         Scene startMenu = new Scene(theStart, 200, 300);
@@ -40,8 +41,8 @@ public class Othello extends Application {
         launch(args);
     }
     
-    private void startGame(Stage primaryStage, String playername, Color color) {
-        Game root = new Game(playername, color);
+    private void startGame(Stage primaryStage, String playername, Color color, Boolean isConfigWBWB) {
+        Game root = new Game(playername, color, isConfigWBWB);
         
         Scene scene = new Scene(root, 750, 675);
         
