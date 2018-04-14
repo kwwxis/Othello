@@ -11,14 +11,11 @@ package greenside_larson_Lee_othello;
  */
 public class AI {
     
-    private Game game;
+    private final Game game;
     
     public AI(Game game) {
         this.game = game;
         game.initBoard();
     }
     
-    public void rewind() {
-        System.out.println("Removing last move");
-    }
 }

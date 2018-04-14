@@ -5,6 +5,7 @@
  */
 package greenside_larson_Lee_othello;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -33,12 +34,15 @@ public class Player extends BorderPane {
             this.color = Color.WHITE;
             this.playerLabel = new Label(this.playerName + " (white)\t score: ");
         }
+        
         addComponents();
     }
     
     private void addComponents() {
         this.setHeight(50);
         this.setWidth(150);
+        
+        this.setPadding(new Insets(5, 5, 0, 15));
         
         this.setLeft(playerLabel);
         this.setRight(scoreLabel);

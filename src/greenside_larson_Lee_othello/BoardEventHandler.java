@@ -6,6 +6,8 @@
 package greenside_larson_Lee_othello;
 
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -24,9 +26,36 @@ public class BoardEventHandler implements EventHandler<MouseEvent> {
     @Override
     public void handle(MouseEvent event) {
         if (!board.isStopped()) {
-            board.pauseTime();
-            space.transition();
-            ConfirmMove confirm = new ConfirmMove(board, space);
+            board.getGame().pause();
+            
+            if (!space.isClaimable()) {
+            	Alert alert = new Alert(AlertType.WARNING);
+            	alert.setTitle("Can't choose this space");
+            	alert.setHeaderText(null);
+            	alert.setContentText(space.isClicked() ?
+            			"This space has already been filled. Please select another space." :
+            			"Please choose a space adjacent to the other player's space");
+
+            	alert.showAndWait();
+                board.getGame().resume();
+            	return;
+            }
+            
+            int possible_score = space.getClaimScore();
+            
+            if (possible_score <= 1) {
+            	Alert alert = new Alert(AlertType.WARNING);
+            	alert.setTitle("Can't choose this space");
+            	alert.setHeaderText(null);
+            	alert.setContentText("Unable to score with this space.");
+
+            	alert.showAndWait();
+                board.getGame().resume();
+            	return;
+            }
+            
+            space.setClaimInProgress();
+            new ConfirmMove(board, space);
         } 
     }
     

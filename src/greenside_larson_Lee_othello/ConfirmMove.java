@@ -5,46 +5,38 @@
  */
 package greenside_larson_Lee_othello;
 
-import javafx.event.ActionEvent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import java.util.Optional;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 /**
  *
  * @author Trevor Greenside
  */
-public class ConfirmMove extends Stage {
-    private final VBox layout;
-    private final Scene scene;
-    private final Button yes;
-    private final Button no;
+public class ConfirmMove {
     
     public ConfirmMove(Board board, Space space) {
-        
-        layout = new VBox();
-        yes = new Button("Yes");
-        yes.setOnAction((ActionEvent e) -> {
-            space.setBlack();
-            board.nextTurn();
-            this.hide();
-        });
-        no = new Button("No");
-        no.setOnAction((ActionEvent e) -> {
-            space.reset();
-            board.resume();
-            this.hide();
-        });
-        Label prompt = new Label("Do you want to make this move?");
-        layout.getChildren().addAll(prompt, yes, no);
-        scene = new Scene(layout, 400, 200);
-        this.setScene(scene);
-        this.show();
+    	Alert alert = new Alert(AlertType.CONFIRMATION);
+    	alert.setTitle("Confirm your move");
+    	alert.setHeaderText("Selected Move: " + space.toString());
+    	alert.setContentText("Do you want to play this move?");
+
+    	ButtonType buttonYes = new ButtonType("Yes");
+    	ButtonType buttonNo = new ButtonType("No");
+
+    	alert.getButtonTypes().setAll(buttonYes, buttonNo);
+
+    	Optional<ButtonType> result = alert.showAndWait();
+    	
+    	if (result.get() == buttonYes) {
+    		space.claim();
+            board.getGame().nextTurn();
+    	} else if (result.get() == buttonNo) {
+            space.unclaim();
+            board.getGame().resume();
+    	}
     }
     
-    public void showThis() {
-        this.show();
-    }
 }

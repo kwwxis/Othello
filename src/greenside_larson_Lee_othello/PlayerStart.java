@@ -6,6 +6,7 @@
 package greenside_larson_Lee_othello;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -19,60 +20,104 @@ import javafx.scene.paint.Color;
  * @author Trevor Greenside
  */
 public class PlayerStart extends VBox {
-    
-    private String humanName;
+	// name fields
     private final TextField getName;
     private final Label getNameLabel;
+    
+    // player color select fields
+    private final Label playerSelectLabel;
     private final ToggleGroup playerSelect;
     private Color chosenColor;
+    
+    // board config fields
+    private final Label configLabel;
     private final ToggleGroup configSelect;
     private boolean isConfigWBWB;
     
+    // start button
     public Button startButton;
     
     public PlayerStart() {
-        getNameLabel = new Label("Name: ");
+        this.setPadding(new Insets(10, 10, 10, 10));
+        this.setSpacing(10);
+        
+        getNameLabel = new Label("Enter Your Name: ");
         getName = new TextField();
+        
+        // initialize player color selector components
+        // -------------------------------------------
+        
+        playerSelectLabel = new Label("Choose Your Color (black goes first):");
         playerSelect = new ToggleGroup();
-        RadioButton rb1 = new RadioButton("Black");
-        rb1.setToggleGroup(playerSelect);
-        rb1.setSelected(true);
-        rb1.setOnAction((ActionEvent e) -> {
+        chosenColor = Color.BLACK;
+        
+        RadioButton playerSelectBlack = new RadioButton("Black");
+        playerSelectBlack.setToggleGroup(playerSelect);
+        playerSelectBlack.setSelected(true);
+        playerSelectBlack.setOnAction((ActionEvent e) -> {
             chosenColor = Color.BLACK;
         });
-        chosenColor = Color.BLACK;
-        RadioButton rb2 = new RadioButton("White");
-        rb2.setToggleGroup(playerSelect);
-        rb2.setOnAction((ActionEvent e) -> {
+        
+        RadioButton playerSelectWhite = new RadioButton("White");
+        playerSelectWhite.setToggleGroup(playerSelect);
+        playerSelectWhite.setOnAction((ActionEvent e) -> {
             chosenColor = Color.WHITE;
         });
         
-        // choose initial config
+        // initialize board configuration components
+        // -----------------------------------------
+        
+        configLabel = new Label("Select initial board configuration:");
         isConfigWBWB = true;
         configSelect = new ToggleGroup();
-        RadioButton config1 = new RadioButton("[W B]\n[B W]");
-        config1.setToggleGroup(configSelect);
-        config1.setSelected(true);
-        config1.setOnAction((ActionEvent e) -> {
+        
+        RadioButton configWBWB = new RadioButton("[W B]\n[B W]");
+        configWBWB.setToggleGroup(configSelect);
+        configWBWB.setSelected(true);
+        configWBWB.setOnAction((ActionEvent e) -> {
             isConfigWBWB = true;
         });
-        RadioButton config2 = new RadioButton("[B W]\n[W B]");
-        config2.setToggleGroup(configSelect);
-        config2.setSelected(true);
-        config2.setOnAction((ActionEvent e) -> {
+        
+        RadioButton configBWBW = new RadioButton("[B W]\n[W B]");
+        configBWBW.setToggleGroup(configSelect);
+        configBWBW.setOnAction((ActionEvent e) -> {
             isConfigWBWB = false;
         });
         
+        // initialize start button component
+        // ---------------------------------
         startButton = new Button("Start");
-        this.getChildren().addAll(getNameLabel, getName, rb1, rb2, config1, config2, startButton);
+        
+        // add components
+        // --------------
+        this.getChildren().addAll(
+        		// name field
+        		getNameLabel, getName,
+        		// player color fields
+        		playerSelectLabel, playerSelectBlack, playerSelectWhite,
+        		// config fields
+        		configLabel, configWBWB, configBWBW,
+        		// start button
+        		startButton);
+    }
+    
+    public void focusPlayerNameField() {
+    	getName.requestFocus();
     }
     
     public String getPlayerName() {
         return getName.getText();
     }
     
-    public Color getColor() {
+    public Color getPlayerColor() {
         return chosenColor;
+    }
+    
+    public Color getComputerColor() {
+        if (this.getPlayerColor() == Color.BLACK)
+            return Color.WHITE;
+        else
+            return Color.BLACK;
     }
     
     public boolean getIsConfigWBWB() {

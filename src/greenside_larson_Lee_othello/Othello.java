@@ -8,7 +8,8 @@ package greenside_larson_Lee_othello;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 /**
@@ -19,18 +20,30 @@ public class Othello extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        
         PlayerStart theStart = new PlayerStart();
+        Scene startMenu = new Scene(theStart, 400, 430);
+        
         theStart.startButton.setOnAction((ActionEvent e) -> {
             String playername = theStart.getPlayerName();
-            Color color = theStart.getColor();
-            Boolean isConfigWBWB = theStart.getIsConfigWBWB();
-            startGame(primaryStage, playername, color, isConfigWBWB); 
+            
+            if (playername.isEmpty()) {
+            	Alert alert = new Alert(AlertType.INFORMATION);
+            	alert.setTitle("Can't start game yet");
+            	alert.setHeaderText(null);
+            	alert.setContentText("Please enter your player name.");
+
+            	alert.showAndWait();
+            	
+            	theStart.focusPlayerNameField();
+            	return;
+            }
+            
+            startGame(primaryStage, theStart); 
         });
         
-        Scene startMenu = new Scene(theStart, 200, 300);
-        primaryStage.setTitle("Othello - Greenside & Larson");
+        primaryStage.setTitle("Othello - Greenside, Larson, & Lee");
         primaryStage.setScene(startMenu);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -41,12 +54,11 @@ public class Othello extends Application {
         launch(args);
     }
     
-    private void startGame(Stage primaryStage, String playername, Color color, Boolean isConfigWBWB) {
-        Game root = new Game(playername, color, isConfigWBWB);
+    private void startGame(Stage primaryStage, PlayerStart theStart) {
+        Game gameRoot = new Game(theStart);
+        Scene gameScene = new Scene(gameRoot, 900, 770);
         
-        Scene scene = new Scene(root, 750, 675);
-        
-        primaryStage.setScene(scene);
+        primaryStage.setScene(gameScene);
         primaryStage.show();
     }
 }
