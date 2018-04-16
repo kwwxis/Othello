@@ -6,7 +6,6 @@
 package greenside_larson_Lee_othello;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,8 +23,6 @@ public class Board extends GridPane {
     private final Space[][] spaces;
     private final Game game;
     
-    private boolean stopped;
-    
     public Board(Game game, int numSpaces) {
         this.game = game;
         this.DIMENSION = numSpaces;
@@ -38,8 +35,6 @@ public class Board extends GridPane {
                 this.spaces[i][j].setOnMouseClicked(new BoardEventHandler(spaces[i][j], this));
             }
         }
-        
-        this.stopped = false;
     }
     
     public boolean isInBounds(int row, int column) {
@@ -52,6 +47,40 @@ public class Board extends GridPane {
             	this.spaces[i][j].rewind(turn);
             }
         }
+    }
+    
+    protected void updateState() {
+    	int total_possible_score = 0;
+    	
+        for (int i = 0; i < DIMENSION; i++) {
+            for (int j = 0; j < DIMENSION; j++) {
+            	Space space = this.spaces[i][j];
+            	
+            	if (space.isClicked()) {
+            		space.score = 0;
+            		continue;
+            	}
+            	
+            	if (!this.checkIfValidMove(space)) {
+            		space.score = 0;
+            		space.setAvailable(false);
+            		continue;
+            	}
+
+            	// add 1 to account for the space itself
+            	space.score = this.claimSurrounding(space, true, game.getCurrentPlayer().getColor()) + 1;
+            	
+            	if (space.isClaimable()) {
+            		space.setAvailable(true);
+            		total_possible_score += space.score;
+            	} else {
+            		space.setAvailable(false);
+            	}
+            }
+        }
+        
+        if (total_possible_score == 0)
+        	game.endGame();
     }
     
     /**
@@ -317,14 +346,6 @@ public class Board extends GridPane {
             spaces[3][4].setWhiteInitial();
             spaces[4][3].setWhiteInitial(); 
         }
-    }
-    
-    public void setStopped() {
-        this.stopped = true;
-    }
-    
-    public boolean isStopped() {
-        return this.stopped;
     }
     
     public Game getGame() {

@@ -38,6 +38,10 @@ public class Player extends BorderPane {
         addComponents();
     }
     
+    public String getName() {
+    	return this.playerName;
+    }
+    
     private void addComponents() {
         this.setHeight(50);
         this.setWidth(150);

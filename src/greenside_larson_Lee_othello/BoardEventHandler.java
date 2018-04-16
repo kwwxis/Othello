@@ -25,38 +25,23 @@ public class BoardEventHandler implements EventHandler<MouseEvent> {
     
     @Override
     public void handle(MouseEvent event) {
-        if (!board.isStopped()) {
-            board.getGame().pause();
-            
-            if (!space.isClaimable()) {
-            	Alert alert = new Alert(AlertType.WARNING);
-            	alert.setTitle("Can't choose this space");
-            	alert.setHeaderText(null);
-            	alert.setContentText(space.isClicked() ?
-            			"This space has already been filled. Please select another space." :
-            			"Please choose a space adjacent to the other player's space");
+        board.getGame().pause();
+        
+        if (!space.isClaimable()) {
+        	Alert alert = new Alert(AlertType.WARNING);
+        	alert.setTitle("Can't choose this space");
+        	alert.setHeaderText(null);
+        	alert.setContentText(space.isClicked() ?
+        			"This space has already been filled. Please select another space." :
+        			"Unable to score with this space.");
 
-            	alert.showAndWait();
-                board.getGame().resume();
-            	return;
-            }
-            
-            int possible_score = space.getClaimScore();
-            
-            if (possible_score <= 1) {
-            	Alert alert = new Alert(AlertType.WARNING);
-            	alert.setTitle("Can't choose this space");
-            	alert.setHeaderText(null);
-            	alert.setContentText("Unable to score with this space.");
-
-            	alert.showAndWait();
-                board.getGame().resume();
-            	return;
-            }
-            
-            space.setClaimInProgress();
-            new ConfirmMove(board, space);
-        } 
+        	alert.showAndWait();
+            board.getGame().resume();
+        	return;
+        }
+        
+        space.setClaimInProgress();
+        new ConfirmMove(board, space);
     }
     
 }

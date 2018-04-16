@@ -55,10 +55,8 @@ public class Othello extends Application {
     }
     
     private void startGame(Stage primaryStage, PlayerStart theStart) {
-        Game gameRoot = new Game(theStart);
-        Scene gameScene = new Scene(gameRoot, 900, 770);
-        
-        primaryStage.setScene(gameScene);
+        Game game = new Game(primaryStage, theStart);
+        game.mount();
         primaryStage.show();
     }
 }

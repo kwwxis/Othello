@@ -52,7 +52,7 @@ public class GameTimer extends Label {
         this.setText("Time: " + Integer.toString(remaining));
         if (remaining == 0) {
             decrementer.stop();
-            game.getBoard().setStopped();
+            game.endGame(game.getCurrentPlayer().getName() + " ran out of time.");
         }
     }
     

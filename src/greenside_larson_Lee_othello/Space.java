@@ -20,8 +20,10 @@ import javafx.scene.shape.Rectangle;
 public class Space extends Rectangle {
     public static final Color TRANSITION_COLOR = Color.YELLOW;
     public static final Color INITIAL_COLOR = Color.GREEN;
+    public static final Color AVAILABLE_COLOR = Color.web("4DA84D");
     
     private Color color;
+    protected int score;
     
     public final int column;
     public final String columnName; // A - H
@@ -89,24 +91,29 @@ public class Space extends Rectangle {
     
     public void setClaimInProgress() {
         this.setFill(color = TRANSITION_COLOR);
-        // don't use updateHistory() here
     }
     
-    public boolean isClaimable() {
-    	return game.getBoard().checkIfValidMove(this);
+    public void setAvailable(boolean state) {
+    	if (state) {
+            this.setFill(color = AVAILABLE_COLOR);
+    	} else {
+            this.setFill(color = INITIAL_COLOR);
+    	}
     }
 
     public boolean isClicked() {
-        return !this.color.equals(INITIAL_COLOR);
+        return !this.color.equals(INITIAL_COLOR) && !this.color.equals(AVAILABLE_COLOR);
+    }
+    
+    public boolean isClaimable() {
+    	return this.score > 1;
     }
     
     /**
-     * Returns the amount that would be added to the player's score if this
-     * space was chosen. Does not actually claim the space.
+     * Returns the amount that would be added to the player's score if this space was chosen.
      */
     public int getClaimScore() {
-    	// add 1 to account for self
-    	return game.getBoard().claimSurrounding(this, true, game.getCurrentPlayer().getColor()) + 1;
+    	return this.score;
     }
     
     private void claim(boolean single) {
