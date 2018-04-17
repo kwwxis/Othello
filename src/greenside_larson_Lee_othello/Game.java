@@ -179,14 +179,19 @@ public class Game extends VBox {
 
     	alert.getButtonTypes().setAll(restartButtonType, quitButtonType);
 
-    	Optional<ButtonType> result = alert.showAndWait();
+    	alert.show();
+        
+        alert.setOnHidden(evt -> {
+            ButtonType result = alert.getResult();
+            if (result == restartButtonType){
+                restart();
+            } else if (result == quitButtonType) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
     	
-    	if (result.get() == restartButtonType){
-    	    restart();
-    	} else if (result.get() == quitButtonType) {
-    	    Platform.exit();
-    	    System.exit(0);
-    	}
+    	
     }
     
     public void nextTurn() {
