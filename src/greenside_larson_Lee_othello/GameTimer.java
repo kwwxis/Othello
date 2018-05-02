@@ -39,7 +39,7 @@ public class GameTimer extends Label {
 
     public void timeReset() {
         remaining = START;
-        this.setText("Time: " + Integer.toString(START));
+        this.setText("AI Time: " + Integer.toString(START));
         this.decrementer.play();
     }
 

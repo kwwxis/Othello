@@ -37,10 +37,11 @@ public class AI {
         }
         if (maxSpace != null) {
             maxSpace.claim();
+            System.out.println("Claimed");
         }
         // get board state // see update state
         // build tree
-        game.stopAITimer();
+        game.nextTurn();
     }
 
     // stop AI if timer reaches end
