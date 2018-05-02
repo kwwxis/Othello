@@ -202,6 +202,10 @@ public class Game extends VBox {
         this.showCurrentTurn();
 
         this.board.updateState();
+        
+        if (!this.isHumanTurn) {
+        	this.ai.moveAI();
+        }
     }
 
     /**
@@ -251,7 +255,11 @@ public class Game extends VBox {
             this.showCurrentTurn();
 
             this.board.updateState();
-        });
+
+            if (!this.isHumanTurn) {
+            	this.ai.moveAI();
+            }
+    	});
     }
 
     public void initBoard() {
