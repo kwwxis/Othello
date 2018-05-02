@@ -35,7 +35,6 @@ public class GameTimer extends Label {
             timeDecrement();
         }));
         decrementer.setCycleCount(Timeline.INDEFINITE);
-        decrementer.play();
     }
 
     public void timeReset() {

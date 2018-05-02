@@ -48,6 +48,8 @@ public class Game extends VBox {
     // buttons
     private final Button undo;
     private final Button restartButton;
+    
+    private final GameTimer aiTimer;
 
     public Game(Othello othelloMain, PlayerStart startConfig) {
         this.othelloMain = othelloMain;
@@ -55,6 +57,7 @@ public class Game extends VBox {
 
         ai = new AI(this);
         board = new Board(this, 8);
+        aiTimer = new GameTimer(this, 10);
 
         human = new Player(startConfig.getPlayerName(), startConfig.getPlayerColor());
         skynet = new Player("Computer", startConfig.getComputerColor());
@@ -76,7 +79,7 @@ public class Game extends VBox {
 
         restartButton = new Button("Restart game");
         restartButton.setOnAction((ActionEvent e) -> {
-            
+
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Restart game");
             alert.setHeaderText(null);
@@ -104,7 +107,7 @@ public class Game extends VBox {
 
         HBox buttons = new HBox(5);
         buttons.setPadding(new Insets(5, 0, 5, 15));
-        buttons.getChildren().addAll(undo, restartButton);
+        buttons.getChildren().addAll(aiTimer, undo, restartButton);
 
         this.getChildren().addAll(playerStatusPane, board, buttons);
     }
@@ -181,10 +184,18 @@ public class Game extends VBox {
         this.showCurrentTurn();
 
         this.board.updateState();
-        
+
         if (!this.isHumanTurn) {
-        	this.ai.moveAI();
+            aiTimer.timeReset();
+            this.ai.moveAI();
+        } else {
+            stopAITimer();
         }
+    }
+    
+    public void stopAITimer() {
+        aiTimer.timeReset();
+        aiTimer.timePause();
     }
 
     /**
@@ -234,9 +245,9 @@ public class Game extends VBox {
             this.board.updateState();
 
             if (!this.isHumanTurn) {
-            	this.ai.moveAI();
+                this.ai.moveAI();
             }
-    	});
+        });
     }
 
     public void initBoard() {
@@ -266,4 +277,5 @@ public class Game extends VBox {
         human.updateScore(humanScore);
         skynet.updateScore(skynetScore);
     }
+   
 }
