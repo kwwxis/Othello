@@ -35,7 +35,6 @@ public class ConfirmMove {
             board.getGame().nextTurn();
         } else if (result.get() == buttonNo) {
             space.unclaim();
-            board.getGame().resume();
         }
     }
 

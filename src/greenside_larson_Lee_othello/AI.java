@@ -43,6 +43,7 @@ public class AI {
         }
         // get board state // see update state
         // build tree
+        time.stop();
     }
 
     // stop AI if timer reaches end
@@ -73,6 +74,10 @@ public class AI {
                 decrementer.stop();
                 ai.endGame();
             }
+        }
+        
+        public void stop() {
+            decrementer.stop();
         }
     }
 }

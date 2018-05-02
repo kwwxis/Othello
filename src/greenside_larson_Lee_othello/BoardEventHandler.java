@@ -26,7 +26,6 @@ public class BoardEventHandler implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent event) {
-        board.getGame().pause();
 
         if (!space.isClaimable()) {
             Alert alert = new Alert(AlertType.WARNING);
@@ -37,7 +36,6 @@ public class BoardEventHandler implements EventHandler<MouseEvent> {
                     : "Unable to score with this space.");
 
             alert.showAndWait();
-            board.getGame().resume();
             return;
         }
 

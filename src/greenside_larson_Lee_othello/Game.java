@@ -34,7 +34,6 @@ public class Game extends VBox {
     // game objects
     private final AI ai;
     private final Board board;
-    private final GameTimer gameTimer;
 
     // player objects
     private final Player human;
@@ -56,7 +55,6 @@ public class Game extends VBox {
 
         ai = new AI(this);
         board = new Board(this, 8);
-        gameTimer = new GameTimer(this, 10);
 
         human = new Player(startConfig.getPlayerName(), startConfig.getPlayerColor());
         skynet = new Player("Computer", startConfig.getComputerColor());
@@ -78,8 +76,7 @@ public class Game extends VBox {
 
         restartButton = new Button("Restart game");
         restartButton.setOnAction((ActionEvent e) -> {
-            pause();
-
+            
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Restart game");
             alert.setHeaderText(null);
@@ -88,8 +85,6 @@ public class Game extends VBox {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 restart();
-            } else {
-                resume();
             }
         });
 
@@ -111,7 +106,7 @@ public class Game extends VBox {
         buttons.setPadding(new Insets(5, 0, 5, 15));
         buttons.getChildren().addAll(undo, restartButton);
 
-        this.getChildren().addAll(playerStatusPane, board, gameTimer, buttons);
+        this.getChildren().addAll(playerStatusPane, board, buttons);
     }
 
     public Scene getGameScene() {
@@ -134,23 +129,10 @@ public class Game extends VBox {
         return this.board;
     }
 
-    public GameTimer getGameTimer() {
-        return this.gameTimer;
-    }
-
-    public void pause() {
-        gameTimer.timePause();
-    }
-
-    public void resume() {
-        gameTimer.timeResume();
-    }
-
     /**
      * Restarts the game
      */
     public void restart() {
-        this.pause();
         othelloMain.restartGame();
     }
 
@@ -159,8 +141,6 @@ public class Game extends VBox {
     }
 
     public void endGame(String extraMessage) {
-        this.pause();
-
         int humanScore = board.calcScore(human.getColor());
         int skynetScore = board.calcScore(skynet.getColor());
 
@@ -194,7 +174,6 @@ public class Game extends VBox {
     }
 
     public void nextTurn() {
-        gameTimer.timeReset();
         this.calcScore();
 
         this.isHumanTurn = !this.isHumanTurn;
@@ -230,7 +209,6 @@ public class Game extends VBox {
             return;
         }
 
-        this.pause();
         System.out.println("Reverting to turn: #" + revertToTurn);
 
         // BLACK goes first, turn number starts at 1, so BLACK has all odd turns
@@ -250,7 +228,6 @@ public class Game extends VBox {
                 this.isHumanTurn = humanIsBLACK;
             }
 
-            gameTimer.timeReset();
             this.calcScore();
             this.showCurrentTurn();
 
