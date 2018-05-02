@@ -26,22 +26,28 @@ public class AI {
     // AI turn, make a move
     public void moveAI() {
         // create timer in a new thread
+        AITimer time = new AITimer(this);
         
         // get board state // see update state
+        
         
         // build tree
     }
     
     // stop AI if timer reaches end
-    public void stopAI() {
-        
+    public void endGame() {
+        game.endGame(game.getCurrentPlayer().getName() + " ran out of time.");
     }
     
     private class AITimer {
         
         private final Timeline decrementer;
+        private int remaining;
+        private final AI ai;
         
         public AITimer(AI ai) {
+            this.ai = ai;
+            this.remaining = 10;
             decrementer = new Timeline(new KeyFrame(Duration.seconds(1), (ActionEvent event) -> {
                 timeDecrement();
             }));
@@ -51,6 +57,11 @@ public class AI {
         
         public void timeDecrement() {
             // TODO
+            remaining--;
+            if (remaining == 0) {
+                decrementer.stop();
+                ai.endGame();
+            }
         }
     }
 }
