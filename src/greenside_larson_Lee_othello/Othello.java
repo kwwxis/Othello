@@ -17,9 +17,12 @@ import javafx.stage.Stage;
  * @author Trevor Greenside
  */
 public class Othello extends Application {
+    private Stage primaryStage;
     
     @Override
     public void start(Stage primaryStage) {
+    	this.primaryStage = primaryStage;
+    	
         PlayerStart theStart = new PlayerStart();
         Scene startMenu = new Scene(theStart, 400, 430);
         
@@ -38,7 +41,7 @@ public class Othello extends Application {
             	return;
             }
             
-            startGame(primaryStage, theStart); 
+            startGame(theStart); 
         });
         
         primaryStage.setTitle("Othello - Greenside, Larson, & Lee");
@@ -46,6 +49,7 @@ public class Othello extends Application {
         primaryStage.setResizable(false);
         primaryStage.show();
     }
+    
 
     /**
      * @param args the command line arguments
@@ -54,9 +58,13 @@ public class Othello extends Application {
         launch(args);
     }
     
-    private void startGame(Stage primaryStage, PlayerStart theStart) {
-        Game game = new Game(primaryStage, theStart);
-        game.mount();
+    protected void restartGame() {
+    	this.start(this.primaryStage);
+    }
+    
+    private void startGame(PlayerStart theStart) {
+        Game game = new Game(this, theStart);
+        this.primaryStage.setScene(game.getGameScene());
         primaryStage.show();
     }
 }

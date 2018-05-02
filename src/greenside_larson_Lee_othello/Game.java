@@ -20,7 +20,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 /**
  *
@@ -28,12 +27,10 @@ import javafx.stage.Stage;
  */
 public class Game extends VBox {
 	// gui parent objects
-	private final Stage primaryStage;
+	private final Othello othelloMain;
 	private final Scene gameScene;
-	private final PlayerStart startConfig;
 
 	// game objects
-    @SuppressWarnings("unused")
 	private final AI ai;
     private final Board board;
     private final GameTimer gameTimer;
@@ -52,10 +49,9 @@ public class Game extends VBox {
     private final Button undo;
     private final Button restartButton;
     
-    public Game(Stage primaryStage, PlayerStart startConfig) {
-    	this.primaryStage 	= primaryStage;
+    public Game(Othello othelloMain, PlayerStart startConfig) {
+    	this.othelloMain 	= othelloMain;
         this.gameScene 		= new Scene(this, 900, 770);
-        this.startConfig 	= startConfig;
         
         ai 			= new AI(this);
         board 		= new Board(this, 8);
@@ -81,6 +77,8 @@ public class Game extends VBox {
         
         restartButton = new Button("Restart game");
         restartButton.setOnAction((ActionEvent e) -> {
+        	pause();
+        	
         	Alert alert = new Alert(AlertType.CONFIRMATION);
         	alert.setTitle("Restart game");
         	alert.setHeaderText(null);
@@ -89,6 +87,8 @@ public class Game extends VBox {
         	Optional<ButtonType> result = alert.showAndWait();
         	if (result.get() == ButtonType.OK){
         	    restart();
+        	} else {
+        		resume();
         	}
         });
         
@@ -102,10 +102,6 @@ public class Game extends VBox {
         this.board.updateState();
     }
     
-    public void mount() {
-        this.primaryStage.setScene(this.gameScene);
-    }
-    
     private void addComponents() {
         this.setMaxWidth(600);
         this.setHeight(800);
@@ -115,6 +111,10 @@ public class Game extends VBox {
         buttons.getChildren().addAll(undo, restartButton);
         
         this.getChildren().addAll(playerStatusPane, board, gameTimer, buttons);
+    }
+    
+    public Scene getGameScene() {
+    	return this.gameScene;
     }
     
     public Player getCurrentPlayer() {
@@ -149,8 +149,8 @@ public class Game extends VBox {
      * Restarts the game
      */
     public void restart() {
-    	Game game = new Game(this.primaryStage, this.startConfig);
-    	game.mount();
+    	this.pause();
+    	othelloMain.restartGame();
     }
     
     public void endGame() {
@@ -190,8 +190,6 @@ public class Game extends VBox {
                 System.exit(0);
             }
         });
-    	
-    	
     }
     
     public void nextTurn() {
