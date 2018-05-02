@@ -17,39 +17,39 @@ import javafx.stage.Stage;
  * @author Trevor Greenside
  */
 public class Othello extends Application {
+
     private Stage primaryStage;
-    
+
     @Override
     public void start(Stage primaryStage) {
-    	this.primaryStage = primaryStage;
-    	
+        this.primaryStage = primaryStage;
+
         PlayerStart theStart = new PlayerStart();
         Scene startMenu = new Scene(theStart, 400, 430);
-        
+
         theStart.startButton.setOnAction((ActionEvent e) -> {
             String playername = theStart.getPlayerName();
-            
-            if (playername.isEmpty()) {
-            	Alert alert = new Alert(AlertType.INFORMATION);
-            	alert.setTitle("Can't start game yet");
-            	alert.setHeaderText(null);
-            	alert.setContentText("Please enter your player name.");
 
-            	alert.showAndWait();
-            	
-            	theStart.focusPlayerNameField();
-            	return;
+            if (playername.isEmpty()) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Can't start game yet");
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter your player name.");
+
+                alert.showAndWait();
+
+                theStart.focusPlayerNameField();
+                return;
             }
-            
-            startGame(theStart); 
+
+            startGame(theStart);
         });
-        
+
         primaryStage.setTitle("Othello - Greenside, Larson, & Lee");
         primaryStage.setScene(startMenu);
         primaryStage.setResizable(false);
         primaryStage.show();
     }
-    
 
     /**
      * @param args the command line arguments
@@ -57,11 +57,11 @@ public class Othello extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
     protected void restartGame() {
-    	this.start(this.primaryStage);
+        this.start(this.primaryStage);
     }
-    
+
     private void startGame(PlayerStart theStart) {
         Game game = new Game(this, theStart);
         this.primaryStage.setScene(game.getGameScene());

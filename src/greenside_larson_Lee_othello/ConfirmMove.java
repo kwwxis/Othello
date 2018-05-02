@@ -16,27 +16,27 @@ import javafx.scene.control.ButtonType;
  * @author Trevor Greenside
  */
 public class ConfirmMove {
-    
+
     public ConfirmMove(Board board, Space space) {
-    	Alert alert = new Alert(AlertType.CONFIRMATION);
-    	alert.setTitle("Confirm your move");
-    	alert.setHeaderText("Selected Move: " + space.toString());
-    	alert.setContentText("Do you want to play this move?");
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm your move");
+        alert.setHeaderText("Selected Move: " + space.toString());
+        alert.setContentText("Do you want to play this move?");
 
-    	ButtonType buttonYes = new ButtonType("Yes");
-    	ButtonType buttonNo = new ButtonType("No");
+        ButtonType buttonYes = new ButtonType("Yes");
+        ButtonType buttonNo = new ButtonType("No");
 
-    	alert.getButtonTypes().setAll(buttonYes, buttonNo);
+        alert.getButtonTypes().setAll(buttonYes, buttonNo);
 
-    	Optional<ButtonType> result = alert.showAndWait();
-    	
-    	if (result.get() == buttonYes) {
-    		space.claim();
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == buttonYes) {
+            space.claim();
             board.getGame().nextTurn();
-    	} else if (result.get() == buttonNo) {
+        } else if (result.get() == buttonNo) {
             space.unclaim();
             board.getGame().resume();
-    	}
+        }
     }
-    
+
 }

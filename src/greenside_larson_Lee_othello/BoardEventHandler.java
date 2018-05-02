@@ -15,33 +15,34 @@ import javafx.scene.input.MouseEvent;
  * @author Trevor Greenside
  */
 public class BoardEventHandler implements EventHandler<MouseEvent> {
+
     private final Space space;
     private final Board board;
-    
+
     public BoardEventHandler(Space space, Board board) {
         this.space = space;
         this.board = board;
     }
-    
+
     @Override
     public void handle(MouseEvent event) {
         board.getGame().pause();
-        
-        if (!space.isClaimable()) {
-        	Alert alert = new Alert(AlertType.WARNING);
-        	alert.setTitle("Can't choose this space");
-        	alert.setHeaderText(null);
-        	alert.setContentText(space.isClicked() ?
-        			"This space has already been filled. Please select another space." :
-        			"Unable to score with this space.");
 
-        	alert.showAndWait();
+        if (!space.isClaimable()) {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Can't choose this space");
+            alert.setHeaderText(null);
+            alert.setContentText(space.isClicked()
+                    ? "This space has already been filled. Please select another space."
+                    : "Unable to score with this space.");
+
+            alert.showAndWait();
             board.getGame().resume();
-        	return;
+            return;
         }
-        
+
         space.setClaimInProgress();
         new ConfirmMove(board, space);
     }
-    
+
 }
