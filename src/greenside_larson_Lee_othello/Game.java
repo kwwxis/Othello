@@ -250,6 +250,8 @@ public class Game extends VBox {
             gameTimer.timeReset();
             this.calcScore();
             this.showCurrentTurn();
+
+            this.board.updateState();
     	});
     }
     
