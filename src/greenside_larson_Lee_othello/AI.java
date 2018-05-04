@@ -5,6 +5,7 @@
  */
 package greenside_larson_Lee_othello;
 
+import greenside_larson_Lee_othello.Board.FutureBoard;
 
 /**
  *
@@ -16,37 +17,41 @@ public class AI {
 
     public AI(Game game) {
         this.game = game;
-        game.initBoard();
     }
 
     // AI turn, make a move
+    // Note: Timer is started in Game function nextTurn()
     public void moveAI() {
-        // Note: Timer started in Game function nextTurn()
+        final Board board = this.game.getBoard();
+        final int max_depth = 3;
+        final FutureBoard tree = board.buildFutureTree(max_depth);
         
-        System.out.println("Timer should have been created.");
-        int highScore = 0;
-        Board board = this.game.getBoard();
+        System.out.println("### Future Board Tree:");
+        tree.print();
+        
         Space maxSpace = null;
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (board.spaces[i][j].score > highScore) {
-                    maxSpace = board.spaces[i][j];
-                    highScore = maxSpace.score;
+        int maxScore = 0;
+        
+        for (int i = 0; i < board.DIMENSION; i++) {
+            for (int j = 0; j < board.DIMENSION; j++) {
+            	Space theSpace = board.spaces[i][j];
+            	
+                if (theSpace.isClaimable() && theSpace.score > maxScore) {
+                    maxSpace = theSpace;
+                    maxScore = theSpace.score;
                 }
             }
         }
+        
         if (maxSpace != null) {
-            maxSpace.claim();
-            System.out.println("Claimed");
+            new ConfirmMove(game.getBoard(), maxSpace);
+        } else {
+        	System.out.println("This should never happen.");
         }
-        // get board state // see update state
+        
+        // get board state
+        // see update state
         // build tree
-        game.nextTurn();
-    }
-
-    // stop AI if timer reaches end
-    public void endGame() {
-        game.endGame(game.getCurrentPlayer().getName() + " ran out of time.");
     }
 
 }

@@ -56,7 +56,7 @@ public class Game extends VBox {
         this.gameScene = new Scene(this, 900, 770);
 
         ai = new AI(this);
-        board = new Board(this, 8);
+        board = new Board(this, 8, startConfig.getIsConfigWBWB());
         aiTimer = new GameTimer(this, 10);
 
         human = new Player(startConfig.getPlayerName(), startConfig.getPlayerColor());
@@ -79,7 +79,8 @@ public class Game extends VBox {
 
         restartButton = new Button("Restart game");
         restartButton.setOnAction((ActionEvent e) -> {
-
+        	this.aiTimer.setPaused(true);
+        	
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Restart game");
             alert.setHeaderText(null);
@@ -88,17 +89,26 @@ public class Game extends VBox {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 restart();
+            } else {
+            	this.aiTimer.setPaused(false);
             }
         });
 
-        board.setInitialConfig(startConfig.getIsConfigWBWB());
-        isHumanTurn = (human.getColor() == Color.BLACK); // black goes first
+        this.isHumanTurn = (human.getColor() == Color.BLACK); // black goes first
+        this.aiTimer.setActive(!this.isHumanTurn);
 
         this.addComponents();
         this.calcScore();
         this.showCurrentTurn();
 
         this.board.updateState();
+        
+        Platform.runLater(() -> {
+        	// make sure initial call to nextTurn() runs inside runLater()
+        	// so that the GUI can update and the board will be visible when
+        	// nextTurn() is called
+        	this.nextTurn(true);
+        });
     }
 
     private void addComponents() {
@@ -107,9 +117,13 @@ public class Game extends VBox {
 
         HBox buttons = new HBox(5);
         buttons.setPadding(new Insets(5, 0, 5, 15));
-        buttons.getChildren().addAll(aiTimer, undo, restartButton);
+        buttons.getChildren().addAll(undo, restartButton, aiTimer);
 
         this.getChildren().addAll(playerStatusPane, board, buttons);
+    }
+    
+    public GameTimer getTimer() {
+    	return this.aiTimer;
     }
 
     public Scene getGameScene() {
@@ -119,13 +133,17 @@ public class Game extends VBox {
     public Player getCurrentPlayer() {
         return this.isHumanTurn ? human : skynet;
     }
+    
+    public Player getHumanPlayer() {
+    	return human;
+    }
+    
+    public Player getComputerPlayer() {
+    	return skynet;
+    }
 
     public int getCurrentTurn() {
         return this.currentTurn;
-    }
-
-    public boolean getIsHumanTurn() {
-        return this.isHumanTurn;
     }
 
     public Board getBoard() {
@@ -136,14 +154,25 @@ public class Game extends VBox {
      * Restarts the game
      */
     public void restart() {
+    	this.aiTimer.setPaused(true);
         othelloMain.restartGame();
     }
-
+    
+    /**
+     * End the game with the default message.
+     */
     public void endGame() {
         endGame(null);
     }
-
+    
+    /**
+     * End the game with a custom message.
+     * 
+     * @param extraMessage the custom message
+     */
     public void endGame(String extraMessage) {
+    	this.aiTimer.setPaused(true);
+    	
         int humanScore = board.calcScore(human.getColor());
         int skynetScore = board.calcScore(skynet.getColor());
 
@@ -177,25 +206,27 @@ public class Game extends VBox {
     }
 
     public void nextTurn() {
+    	nextTurn(false);
+    }
+    
+    private void nextTurn(boolean afterRewind) {
         this.calcScore();
-
-        this.isHumanTurn = !this.isHumanTurn;
-        this.currentTurn++;
+        
+        if (!afterRewind) {
+            this.isHumanTurn = !this.isHumanTurn;
+            this.currentTurn++;
+        }
+        
         this.showCurrentTurn();
 
         this.board.updateState();
 
         if (!this.isHumanTurn) {
-            aiTimer.timeReset();
+            aiTimer.setActive(true);
             this.ai.moveAI();
         } else {
-            stopAITimer();
+        	aiTimer.setActive(false);
         }
-    }
-    
-    public void stopAITimer() {
-        aiTimer.timeReset();
-        aiTimer.timePause();
     }
 
     /**
@@ -238,24 +269,9 @@ public class Game extends VBox {
                 // if odd
                 this.isHumanTurn = humanIsBLACK;
             }
-
-            this.calcScore();
-            this.showCurrentTurn();
-
-            this.board.updateState();
-
-            if (!this.isHumanTurn) {
-                this.ai.moveAI();
-            }
+            
+            this.nextTurn(true);
         });
-    }
-
-    public void initBoard() {
-        // display pop-up window to determine which player will be white
-        // and which will be black. Black moves first. Human will choose,
-        // Black is the other color.
-
-        System.out.println("Init board method incomplete");
     }
 
     public void showCurrentTurn() {

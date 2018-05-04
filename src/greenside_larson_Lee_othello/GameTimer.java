@@ -17,46 +17,67 @@ import javafx.util.Duration;
  * @author Trevor Greenside
  */
 public class GameTimer extends Label {
-
+	
+	private final String LABEL_PREFIX;
     private final Game game;
     private final int START;
     private final Timeline decrementer;
+    
     private int remaining;
 
     public GameTimer(Game game, int startTime) {
-        this.game = game;
-        this.START = startTime;
-        this.remaining = START;
+        this.game 			= game;
+        this.START 			= startTime;
+        this.remaining 		= START;
+        this.LABEL_PREFIX 	= "AI Time: ";
 
-        this.setText("Time: " + Integer.toString(START));
-        this.setPadding(new Insets(5, 0, 5, 15));
+        this.setText(LABEL_PREFIX + Integer.toString(START));
+        this.setPadding(new Insets(5, 5, 5, 10));
 
         decrementer = new Timeline(new KeyFrame(Duration.seconds(1), (ActionEvent event) -> {
             timeDecrement();
         }));
         decrementer.setCycleCount(Timeline.INDEFINITE);
     }
+    
+    public void setActive(boolean newState) {
+    	if (newState) {
+            this.timeReset();
+    	} else {
+    		this.timeReset();
+    		this.timePause();
+    		this.setText(LABEL_PREFIX + "n/a");
+    	}
+    }
+    
+    public void setPaused(boolean newState) {
+    	if (newState) {
+    		this.timePause();
+    	} else {
+    		this.timeResume();
+    	}
+    }
 
-    public void timeReset() {
+    private void timeReset() {
         remaining = START;
-        this.setText("AI Time: " + Integer.toString(START));
+        this.setText(LABEL_PREFIX + Integer.toString(START));
         this.decrementer.play();
     }
 
-    public void timeResume() {
+    private void timeResume() {
         this.decrementer.play();
     }
 
     private void timeDecrement() {
         remaining--;
-        this.setText("Time: " + Integer.toString(remaining));
+        this.setText(LABEL_PREFIX + Integer.toString(remaining));
         if (remaining == 0) {
             decrementer.stop();
             game.endGame(game.getCurrentPlayer().getName() + " ran out of time.");
         }
     }
 
-    public void timePause() {
+    private void timePause() {
         this.decrementer.stop();
     }
 

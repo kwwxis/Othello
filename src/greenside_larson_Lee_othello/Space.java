@@ -32,21 +32,44 @@ public class Space extends Rectangle {
     public final String rowName; // 1 - 8
 
     private final Game game;
+    private final Board board;
     private final SortedMap<Integer, Color> history;
 
-    public Space(Game game, int row, int column, String rowName, String columnName) {
+    public Space(Game game, Board board, int row, int column, String rowName, String columnName) {
         this.row = row;
         this.column = column;
         this.rowName = rowName;
         this.columnName = columnName;
 
         this.game = game;
+        this.board = board;
         this.history = new TreeMap<Integer, Color>(java.util.Collections.reverseOrder());
 
         this.setHeight(75);
         this.setWidth(75);
         this.setStroke(Color.GRAY);
         this.unclaim();
+    }
+    
+    private Space(Space space, Board board) {
+        this.row = space.row;
+        this.column = space.column;
+        this.rowName = space.rowName;
+        this.columnName = space.columnName;
+        
+    	this.game = space.game;
+    	this.board = board;
+    	this.history = null;
+    	
+    	this.score = space.score;
+    	this.color = space.color;
+    }
+    
+    /**
+     * Clone this Space but without history.
+     */
+    public Space cloneSpace(Board board) {
+    	return new Space(this, board);
     }
 
     protected void rewind(int turn) {
@@ -85,6 +108,10 @@ public class Space extends Rectangle {
     }
 
     private void updateHistory() {
+    	if (this.history == null) {
+    		return;
+    	}
+    	
         // update history to current color
         // usage of this method must come after setFill()
         this.history.put(game.getCurrentTurn(), color);
@@ -107,7 +134,7 @@ public class Space extends Rectangle {
     }
 
     public boolean isClaimable() {
-        return this.score > 1;
+        return this.score > 0;
     }
 
     /**
@@ -117,23 +144,27 @@ public class Space extends Rectangle {
     public int getClaimScore() {
         return this.score;
     }
+    
+    protected void claim(Player player) {
+    	claimBasic(false, player);
+    }
 
-    private void claim(boolean single) {
-        this.setFill(color = game.getCurrentPlayer().getColor());
+    private void claimBasic(boolean single, Player player) {
+        this.setFill(color = player.getColor());
 
         this.updateHistory();
 
         if (!single) {
-            game.getBoard().claimSurrounding(this, false, this.color);
+        	this.board.claimSurrounding(this, false, this.color);
         }
     }
 
     protected void claimSingle() {
-        claim(true);
+    	claimBasic(true, this.game.getCurrentPlayer());
     }
 
     public void claim() {
-        claim(false);
+    	claimBasic(false, this.game.getCurrentPlayer());
     }
 
     /**
@@ -141,7 +172,8 @@ public class Space extends Rectangle {
      */
     public void setBlackInitial() {
         this.setFill(color = Color.BLACK);
-        this.history.put(0, color);
+        if (this.history != null)
+        	this.history.put(0, color);
     }
 
     /**
@@ -149,7 +181,8 @@ public class Space extends Rectangle {
      */
     public void setWhiteInitial() {
         this.setFill(color = Color.WHITE);
-        this.history.put(0, color);
+        if (this.history != null)
+        	this.history.put(0, color);
     }
 
     public void unclaim() {

@@ -19,7 +19,7 @@ import javafx.scene.paint.Color;
  *
  * @author Trevor Greenside
  */
-public class PlayerStart extends VBox {
+public class PlayerStartMenu extends VBox {
     // name fields
 
     private final TextField getName;
@@ -38,7 +38,7 @@ public class PlayerStart extends VBox {
     // start button
     public Button startButton;
 
-    public PlayerStart() {
+    public PlayerStartMenu() {
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setSpacing(10);
 

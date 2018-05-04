@@ -6,6 +6,9 @@
 package greenside_larson_Lee_othello;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,11 +22,12 @@ import javafx.scene.paint.Color;
  */
 public class Board extends GridPane {
 
-    private final int DIMENSION;
+    public final int DIMENSION;
+    
     protected final Space[][] spaces;
-    private final Game game;
+    protected final Game game;
 
-    public Board(Game game, int numSpaces) {
+    public Board(Game game, int numSpaces, boolean isConfigWBWB) {
         this.game = game;
         this.DIMENSION = numSpaces;
         this.spaces = new Space[DIMENSION][DIMENSION];
@@ -35,8 +39,137 @@ public class Board extends GridPane {
                 this.spaces[i][j].setOnMouseClicked(new BoardEventHandler(spaces[i][j], this));
             }
         }
+        
+        if (isConfigWBWB) {
+            this.spaces[3][3].setWhiteInitial();
+            this.spaces[4][4].setWhiteInitial();
+            this.spaces[3][4].setBlackInitial();
+            this.spaces[4][3].setBlackInitial();
+        } else {
+        	this.spaces[3][3].setBlackInitial();
+        	this.spaces[4][4].setBlackInitial();
+        	this.spaces[3][4].setWhiteInitial();
+        	this.spaces[4][3].setWhiteInitial();
+        }
     }
+    
+    public Board(Board board) {
+        this.game = board.game;
+    	this.DIMENSION = board.DIMENSION;
+        this.spaces = new Space[this.DIMENSION][this.DIMENSION];
+        
+        for (int i = 0; i < this.DIMENSION; i++) {
+            for (int j = 0; j < this.DIMENSION; j++) {
+            	this.spaces[i][j] = board.spaces[i][j].cloneSpace(this);
+            }
+        }
+    }
+    
+    public class FutureBoard extends Board {
+    	private final Board source;
+    	
+    	/**
+    	 * The parent FutureBoard node, null if current FutureBoard is root node.
+    	 */
+    	protected final FutureBoard parent;
+    	
+    	/**
+    	 * Children FutureBoards. Dictionary from possible move Space to child FutureBoard that
+    	 * would result from scoring with that Space.
+    	 */
+    	protected final Map<Space, FutureBoard> children;
+    	
+    	/**
+    	 * The incremental depth. The root node is always 0
+    	 */
+    	protected final int depth;
+    	
+    	/**
+    	 * The player who would have the current turn at the depth of this FutureBoard.
+    	 */
+    	protected final Player player;
 
+		public FutureBoard(Board source, FutureBoard parent, int depth, Player player) {
+			super(source);
+			this.source = source;
+			this.parent = parent;
+			this.depth = depth;
+			this.player = player;
+			this.children = new HashMap<Space, FutureBoard>();
+		}
+		
+		public boolean hasParent() {
+			return this.parent != null;
+		}
+		
+		public boolean hasChildren() {
+			return !this.children.isEmpty();
+		}
+		
+		public FutureBoard cloneBoard(int new_depth, Player player) {
+			return new FutureBoard(this.source, this.parent, new_depth, player);
+		}
+		
+		public void print() {
+			System.out.println(
+					"Depth: " + depth +
+					", Num Children: " + children.size()
+				);
+			
+			for (FutureBoard child : children.values()) {
+				child.print();
+			}
+		}
+    	
+    }
+    
+    protected FutureBoard buildFutureTree(int maxDepth) {
+    	// root node depth -> 0
+    	// root node parent -> null
+    	FutureBoard rootNode = new FutureBoard(this, null, 0, this.game.getCurrentPlayer());
+    	
+    	buildFutureTree(maxDepth, rootNode);
+    	
+    	return rootNode;
+    }
+    
+    private void buildFutureTree(int maxDepth, FutureBoard parentBoard) {
+    	// figures out a list of all possible moves from the parentBoard
+    	UpdateStateResult res = parentBoard.updateState(true, parentBoard.player);
+    	
+    	if (parentBoard.depth >= maxDepth) {
+    		return;
+    	}
+    	
+    	// next depth for child boards
+    	int next_depth = parentBoard.depth + 1;
+    	
+    	for (Space move : res.possible_moves) {
+    		// ----- FIGURE OUT PLAYER FOR NEXT CHILD DEPTH
+    		
+    		Player nextDepthPlayer;
+    		// alternate between players for depths
+    		if (parentBoard.player == this.game.getHumanPlayer()) {
+    			nextDepthPlayer = this.game.getComputerPlayer();
+    		} else {
+    			nextDepthPlayer = this.game.getHumanPlayer();
+    		}
+    		
+    		// ----- CLONE THE PARENT BOARD AND CREATE/ADD THE CHILD
+    		
+    		FutureBoard childBoard = parentBoard.cloneBoard(next_depth, nextDepthPlayer);
+    		
+    		// claim the move
+    		childBoard.spaces[move.row][move.column].claim(parentBoard.player);
+    		
+    		// add the child to the parent board's children
+    		parentBoard.children.put(move, childBoard);
+    		
+    		// recursive call
+    		buildFutureTree(maxDepth, childBoard);
+    	}
+    }
+    
     public boolean isInBounds(int row, int column) {
         return row >= 0 && column >= 0 && row < DIMENSION && column < DIMENSION;
     }
@@ -48,8 +181,19 @@ public class Board extends GridPane {
             }
         }
     }
-
-    protected void updateState() {
+    
+    protected UpdateStateResult updateState() {
+    	return updateState(false, game.getCurrentPlayer());
+    }
+    
+    /**
+     * Update the state of the Board.
+     * 
+     * @param soft if true, no changes to the Game state will be made based on the result of this function
+     * @return UpdateStateResult
+     */
+    protected UpdateStateResult updateState(boolean soft, Player currentPlayer) {
+    	List<Space> possible_moves = new ArrayList<Space>();
         int total_possible_score = 0;
 
         for (int i = 0; i < DIMENSION; i++) {
@@ -61,27 +205,39 @@ public class Board extends GridPane {
                     continue;
                 }
 
-                if (!this.checkIfValidMove(space)) {
+                if (!this.checkLocation(space, currentPlayer)) {
                     space.score = 0;
                     space.setAvailable(false);
                     continue;
                 }
 
-                // add 1 to account for the space itself
-                space.score = this.claimSurrounding(space, true, game.getCurrentPlayer().getColor()) + 1;
-
+                space.score = this.claimSurrounding(space, true, currentPlayer.getColor());
+                
                 if (space.isClaimable()) {
                     space.setAvailable(true);
                     total_possible_score += space.score;
+                    possible_moves.add(space);
                 } else {
                     space.setAvailable(false);
                 }
             }
         }
 
-        if (total_possible_score == 0) {
+        if (!soft && total_possible_score == 0) {
             game.endGame();
         }
+        
+        return new UpdateStateResult(total_possible_score, possible_moves);
+    }
+    
+    class UpdateStateResult {
+    	public final int total_possible_score;
+    	public final List<Space> possible_moves;
+    	
+    	public UpdateStateResult(int total_possible_score, List<Space> possible_moves) {
+    		this.total_possible_score = total_possible_score;
+    		this.possible_moves = possible_moves;
+    	}
     }
 
     /**
@@ -115,7 +271,7 @@ public class Board extends GridPane {
                     this.getChildren().add(colLabel);
                 }
 
-                spaces[row][col] = new Space(this.game, row, col, rowName, colName);
+                spaces[row][col] = new Space(this.game, this, row, col, rowName, colName);
                 GridPane.setRowIndex(spaces[row][col], row + 1);
                 GridPane.setColumnIndex(spaces[row][col], col + 1);
                 this.getChildren().add(spaces[row][col]);
@@ -125,11 +281,11 @@ public class Board extends GridPane {
     }
 
     /**
-     * Check if choosing the given space is a valid move.
+     * Check if choosing the given space is a valid location.
      *
      * @param space the space that the player wants to choose
      */
-    protected boolean checkIfValidMove(Space space) {
+    private boolean checkLocation(Space space, Player player) {
         int row = space.row;
         int col = space.column;
 
@@ -138,7 +294,7 @@ public class Board extends GridPane {
         }
 
         Space s;
-        Color c = game.getCurrentPlayer().getColor();
+        Color c = player.getColor();
 
         // check up
         if (this.isInBounds(row - 1, col) && (s = this.spaces[row - 1][col]).isClicked() && s.getColor() != c) {
@@ -199,7 +355,7 @@ public class Board extends GridPane {
                 }
 
                 if (down.getColor().equals(claimColor)) {
-                    score += downList.size() - 1;
+                    score += downList.size() - 1; // subtract 1 to not include the stop Space
                     if (!onlyCheckScore) {
                         downList.forEach((s) -> s.claimSingle());
                     }
@@ -216,7 +372,7 @@ public class Board extends GridPane {
                 }
 
                 if (up.getColor().equals(claimColor)) {
-                    score += upList.size() - 1;
+                    score += upList.size() - 1; // subtract 1 to not include the stop Space
                     if (!onlyCheckScore) {
                         upList.forEach((s) -> s.claimSingle());
                     }
@@ -249,7 +405,7 @@ public class Board extends GridPane {
                         rightMidDone = true;
                     } else if (rightMid.getColor().equals(claimColor)) {
                         rightMidDone = true;
-                        score += rightMidList.size() - 1;
+                        score += rightMidList.size() - 1; // subtract 1 to not include the stop Space
                         if (!onlyCheckScore) {
                             rightMidList.forEach((s) -> s.claimSingle());
                         }
@@ -264,7 +420,7 @@ public class Board extends GridPane {
                         rightDiagUpDone = true;
                     } else if (rightDiagUp.getColor().equals(claimColor)) {
                         rightDiagUpDone = true;
-                        score += rightDiagUpList.size() - 1;
+                        score += rightDiagUpList.size() - 1; // subtract 1 to not include the stop Space
                         if (!onlyCheckScore) {
                             rightDiagUpList.forEach((s) -> s.claimSingle());
                         }
@@ -279,7 +435,7 @@ public class Board extends GridPane {
                         rightDiagDownDone = true;
                     } else if (rightDiagDown.getColor().equals(claimColor)) {
                         rightDiagDownDone = true;
-                        score += rightDiagDownList.size() - 1;
+                        score += rightDiagDownList.size() - 1; // subtract 1 to not include the stop Space
                         if (!onlyCheckScore) {
                             rightDiagDownList.forEach((s) -> s.claimSingle());
                         }
@@ -311,7 +467,7 @@ public class Board extends GridPane {
                         leftMidDone = true;
                     } else if (leftMid.getColor().equals(claimColor)) {
                         leftMidDone = true;
-                        score += leftMidList.size() - 1;
+                        score += leftMidList.size() - 1; // subtract 1 to not include the stop Space
                         if (!onlyCheckScore) {
                             leftMidList.forEach((s) -> s.claimSingle());
                         }
@@ -326,7 +482,7 @@ public class Board extends GridPane {
                         leftDiagUpDone = true;
                     } else if (leftDiagUp.getColor().equals(claimColor)) {
                         leftDiagUpDone = true;
-                        score += leftDiagUpList.size() - 1;
+                        score += leftDiagUpList.size() - 1; // subtract 1 to not include the stop Space
                         if (!onlyCheckScore) {
                             leftDiagUpList.forEach((s) -> s.claimSingle());
                         }
@@ -341,7 +497,7 @@ public class Board extends GridPane {
                         leftDiagDownDone = true;
                     } else if (leftDiagDown.getColor().equals(claimColor)) {
                         leftDiagDownDone = true;
-                        score += leftDiagDownList.size() - 1;
+                        score += leftDiagDownList.size() - 1; // subtract 1 to not include the stop Space
                         if (!onlyCheckScore) {
                             leftDiagDownList.forEach((s) -> s.claimSingle());
                         }
@@ -349,26 +505,15 @@ public class Board extends GridPane {
                 }
             }
         }
+        
+        if (score != 0) {
+        	// the score so far only accounts for the spaces surrounding the space that
+        	// was clicked, so add 1 to account for self (the space that was clicked)
+        	// if there is a score
+        	score += 1;
+        }
 
         return score;
-    }
-
-    public void setInitialConfig(Boolean isConfigWBWB) {
-        if (isConfigWBWB) {
-            spaces[3][3].setWhiteInitial();
-            spaces[4][4].setWhiteInitial();
-            spaces[3][4].setBlackInitial();
-            spaces[4][3].setBlackInitial();
-        } else {
-            spaces[3][3].setBlackInitial();
-            spaces[4][4].setBlackInitial();
-            spaces[3][4].setWhiteInitial();
-            spaces[4][3].setWhiteInitial();
-        }
-    }
-
-    public Game getGame() {
-        return game;
     }
 
     public int calcScore(Color color) {

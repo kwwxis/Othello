@@ -26,7 +26,6 @@ public class BoardEventHandler implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent event) {
-
         if (!space.isClaimable()) {
             Alert alert = new Alert(AlertType.WARNING);
             alert.setTitle("Can't choose this space");
@@ -39,7 +38,6 @@ public class BoardEventHandler implements EventHandler<MouseEvent> {
             return;
         }
 
-        space.setClaimInProgress();
         new ConfirmMove(board, space);
     }
 
