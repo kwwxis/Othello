@@ -51,7 +51,7 @@ public class Game extends VBox {
     
     private final GameTimer aiTimer;
 
-    public Game(Othello othelloMain, PlayerStart startConfig) {
+    public Game(Othello othelloMain, PlayerStartMenu startConfig) {
         this.othelloMain = othelloMain;
         this.gameScene = new Scene(this, 900, 770);
 

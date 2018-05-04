@@ -24,7 +24,7 @@ public class Othello extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
-        PlayerStart theStart = new PlayerStart();
+        PlayerStartMenu theStart = new PlayerStartMenu();
         Scene startMenu = new Scene(theStart, 400, 430);
 
         theStart.startButton.setOnAction((ActionEvent e) -> {
@@ -62,7 +62,7 @@ public class Othello extends Application {
         this.start(this.primaryStage);
     }
 
-    private void startGame(PlayerStart theStart) {
+    private void startGame(PlayerStartMenu theStart) {
         Game game = new Game(this, theStart);
         this.primaryStage.setScene(game.getGameScene());
         primaryStage.show();
