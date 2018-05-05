@@ -32,7 +32,7 @@ public class Space extends Rectangle {
     public final String rowName; // 1 - 8
 
     private final Game game;
-    private final Board board;
+    protected final Board board;
     private final SortedMap<Integer, Color> history;
 
     public Space(Game game, Board board, int row, int column, String rowName, String columnName) {

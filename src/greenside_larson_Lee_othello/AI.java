@@ -7,6 +7,8 @@ package greenside_larson_Lee_othello;
 
 import greenside_larson_Lee_othello.Board.FutureBoard;
 
+import java.util.Map;
+
 /**
  *
  * @author Trevor Greenside
@@ -28,6 +30,7 @@ public class AI {
         
         System.out.println("### Future Board Tree:");
         tree.print();
+        maxVal(tree, null, null);
         
         Space maxSpace = null;
         int maxScore = 0;
@@ -52,6 +55,61 @@ public class AI {
         // get board state
         // see update state
         // build tree
+    }
+
+    Space maxVal(Space space, Map.Entry<Space, FutureBoard> alpha, Map.Entry<Space, FutureBoard> beta){
+        Map.Entry<Space, FutureBoard> curSpace = null;
+        Board board1 = space.board;
+        Space key;
+        FutureBoard val;
+        int v = -1;
+        for(Map.Entry<Space, FutureBoard> set : board1.children.entrySet()){
+            key = set.getKey();
+            val = set.getValue();
+            //get minval
+            Map.Entry<Space, FutureBoard> v1 = minVal(val, alpha, beta);
+            if(v1.getKey().score > v) {
+                curSpace = v1;
+            }
+            if(beta != null){
+                if(key.score >= beta.getKey().score){
+                    return curSpace;
+                }
+            }
+            if(alpha.getKey().score < v1.getKey().score){
+                alpha = v1;
+            }
+
+
+        }
+        return curSpace;
+    }
+
+    Space minVal(FutureBoard board, Space space, Map.Entry<Space, FutureBoard> alpha, Map.Entry<Space,FutureBoard> beta){
+        Map.Entry<Space, FutureBoard> curSpace = null;
+        Space key;
+        FutureBoard val;
+        if(board.depth == 3){
+            return space;
+        }
+        int v = -1;
+        for(Map.Entry<Space, FutureBoard> set: board.children.entrySet()){
+            key = set.getKey();
+            val = set.getValue();
+            Map.Entry<Space, FutureBoard> v1 = minVal(val, key, alpha, beta);
+            if(v1.getKey().score < v){
+                curSpace = v1;
+            }
+            if(alpha != null){
+                if(key.score <= beta.getKey().score){
+                    return curSpace;
+                }
+            }
+            if(beta.getKey().score > v1.getKey().score){
+                beta = v1;
+            }
+        }
+        return curSpace;
     }
 
 }
