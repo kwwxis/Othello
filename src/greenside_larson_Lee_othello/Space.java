@@ -51,6 +51,21 @@ public class Space extends Rectangle {
         this.unclaim();
     }
     
+    protected Space() {
+    	this.row = -1;
+    	this.column = -1;
+    	this.rowName = null;
+    	this.columnName = null;
+    	this.game = null;
+    	this.board = null;
+    	this.history = null;
+    	this.score = 0;
+    }
+    
+    protected boolean isDummySpace() {
+    	return this.game == null && this.board == null;
+    }
+    
     private Space(Space space, Board board) {
         this.row = space.row;
         this.column = space.column;
@@ -193,9 +208,20 @@ public class Space extends Rectangle {
     public Color getColor() {
         return this.color;
     }
+    
+    public String toSimpleString() {
+    	return this.columnName + "-" + this.rowName;
+    }
 
     @Override
     public String toString() {
-        return this.columnName + "-" + this.rowName;
+        String s = "<" + this.columnName + "-" + this.rowName + ", Score:"+this.score;
+        if (this.board != null && this.board instanceof Board.FutureBoard) {
+        	s += ", Depth:" + ((Board.FutureBoard) this.board).depth;
+        }
+        if (this.isDummySpace()) {
+        	s += ", (dummy space)";
+        }
+        return s + ">";
     }
 }

@@ -6,6 +6,7 @@
 package greenside_larson_Lee_othello;
 
 import greenside_larson_Lee_othello.Board.FutureBoard;
+import javafx.application.Platform;
 
 import java.util.Map;
 
@@ -27,36 +28,124 @@ public class AI {
         final Board board = this.game.getBoard();
         final int max_depth = 3;
         final FutureBoard tree = board.buildFutureTree(max_depth);
+
+        System.out.println("### Possible Moves:");
+        System.out.println(tree.possible_moves);
         
-        System.out.println("### Future Board Tree:");
-        tree.print();
-        maxVal(tree, null, null);
+        System.out.println("### Future Board AB Prune:");
+        Space s = getTopSpace(maxVal2(tree, null, null));
         
-        Space maxSpace = null;
-        int maxScore = 0;
+        System.out.println("### Future Board Final:");
+        System.out.println(s);
         
-        for (int i = 0; i < board.DIMENSION; i++) {
-            for (int j = 0; j < board.DIMENSION; j++) {
-            	Space theSpace = board.spaces[i][j];
-            	
-                if (theSpace.isClaimable() && theSpace.score > maxScore) {
-                    maxSpace = theSpace;
-                    maxScore = theSpace.score;
-                }
-            }
-        }
-        
-        if (maxSpace != null) {
-            new ConfirmMove(game.getBoard(), maxSpace);
+        if (s != null) {
+        	Platform.runLater(() -> {
+                new ConfirmMove(game.getBoard(), s);
+        	});
         } else {
         	System.out.println("This should never happen.");
         }
-        
-        // get board state
-        // see update state
-        // build tree
+    }
+    
+    /**
+     * Get the best space to score with in the given board with this heuristic.
+     * 
+     * @param board
+     * @return Space
+     */
+    Space heuristic(FutureBoard board) {
+    	Space maxSpace = createDummySpace();
+    	int maxScore = 0;
+    	
+    	for (Space s : board.possible_moves) {
+    		if (s.score > maxScore) {
+    			maxScore = s.score;
+    			maxSpace = s;
+    		}
+    	}
+    	
+    	return maxSpace;
+    }
+    
+    Space getTopSpace(Space s) {
+    	if (s == null || s.isDummySpace() || s.board == null || !(s.board instanceof FutureBoard)) {
+    		return null;
+    	}
+    	
+    	System.out.println(s);
+    	
+    	FutureBoard board = (FutureBoard) s.board;
+    	
+    	if (board.depth == 0) {
+    		return this.game.getBoard().spaces[s.row][s.column];
+    	}
+    	
+    	return getTopSpace(board.parentSpace);
+    }
+    
+    Space createDummySpace() {
+    	return new Space(); // creates a throwaway Space with a score of 0
+    }
+    
+    Space maxVal2(FutureBoard node, Integer alpha, Integer beta) {
+    	Space v = createDummySpace();
+    	
+    	if (node.children.isEmpty()) {
+    		// Reached bottom of branch
+    		return heuristic(node);
+    	}
+    	
+    	for (Map.Entry<Space, FutureBoard> child : node.children.entrySet()) {
+    		Space v1 = minVal2(child.getValue(), alpha, beta);
+    		
+    		if (v.isDummySpace() || v1.score > v.score) {
+    			v = v1;
+    		}
+    		
+    		if (beta != null) {
+    			if (v1.score >= beta) {
+    				return v;
+    			}
+    		}
+    		
+    		if (alpha == null || v1.score > alpha) {
+    			alpha = v1.score;
+    		}
+    	}
+    	
+    	return v;
     }
 
+    Space minVal2(FutureBoard node, Integer alpha, Integer beta) {
+    	Space v = createDummySpace();
+
+    	if (node.children.isEmpty()) {
+    		// Reached bottom of branch
+    		return heuristic(node);
+    	}
+    	
+    	for (Map.Entry<Space, FutureBoard> child : node.children.entrySet()) {
+    		Space v1 = maxVal2(child.getValue(), alpha, beta);
+    		
+    		if (v.isDummySpace() || v1.score < v.score) {
+    			v = v1;
+    		}
+    		
+    		if (alpha != null) {
+    			if (v1.score <= alpha) {
+    				return v;
+    			}
+    		}
+    		
+    		if (beta == null || v1.score < beta) {
+    			beta = v1.score;
+    		}
+    	}
+    	
+    	return v;
+    }
+    
+/*
     Space maxVal(Space space, Map.Entry<Space, FutureBoard> alpha, Map.Entry<Space, FutureBoard> beta){
         Map.Entry<Space, FutureBoard> curSpace = null;
         Board board1 = space.board;
@@ -110,6 +199,6 @@ public class AI {
             }
         }
         return curSpace;
-    }
+    }*/
 
 }

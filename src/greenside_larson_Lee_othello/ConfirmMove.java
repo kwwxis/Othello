@@ -25,7 +25,7 @@ public class ConfirmMove {
         
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirm " + playerName + "'s move");
-        alert.setHeaderText(playerName + "'s selected Move: " + space.toString());
+        alert.setHeaderText(playerName + "'s selected Move: " + space.toSimpleString());
         alert.setContentText("Do you want to play this move?");
 
         ButtonType buttonYes = new ButtonType("Yes");

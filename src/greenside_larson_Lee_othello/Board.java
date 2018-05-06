@@ -74,10 +74,21 @@ public class Board extends GridPane {
     	protected final FutureBoard parent;
     	
     	/**
+    	 * The move from the parent that led to this FutureBoard
+    	 */
+    	protected final Space parentSpace;
+    	
+    	/**
     	 * Children FutureBoards. Dictionary from possible move Space to child FutureBoard that
     	 * would result from scoring with that Space.
     	 */
     	protected final Map<Space, FutureBoard> children;
+    	
+    	/**
+    	 * Possibles moves. Unless if the depth limit is reached, the "children" field should
+    	 * have its keyset exactly the same as this list.
+    	 */
+    	protected List<Space> possible_moves;
     	
     	/**
     	 * The incremental depth. The root node is always 0
@@ -89,13 +100,15 @@ public class Board extends GridPane {
     	 */
     	protected final Player player;
 
-		public FutureBoard(Board source, FutureBoard parent, int depth, Player player) {
+		public FutureBoard(Board source, FutureBoard parent, Space parentSpace, int depth, Player player) {
 			super(source);
 			this.source = source;
 			this.parent = parent;
+			this.parentSpace = parentSpace;
 			this.depth = depth;
 			this.player = player;
 			this.children = new HashMap<Space, FutureBoard>();
+			this.possible_moves = new ArrayList<Space>();
 		}
 		
 		public boolean hasParent() {
@@ -106,8 +119,8 @@ public class Board extends GridPane {
 			return !this.children.isEmpty();
 		}
 		
-		public FutureBoard cloneBoard(int new_depth, Player player) {
-			return new FutureBoard(this.source, this.parent, new_depth, player);
+		public FutureBoard cloneBoard(int new_depth, FutureBoard parentBoard, Space parentSpace, Player player) {
+			return new FutureBoard(this.source, parentBoard, parentSpace, new_depth, player);
 		}
 		
 		public void print() {
@@ -126,7 +139,7 @@ public class Board extends GridPane {
     protected FutureBoard buildFutureTree(int maxDepth) {
     	// root node depth -> 0
     	// root node parent -> null
-    	FutureBoard rootNode = new FutureBoard(this, null, 0, this.game.getCurrentPlayer());
+    	FutureBoard rootNode = new FutureBoard(this, null, null, 0, this.game.getCurrentPlayer());
     	
     	buildFutureTree(maxDepth, rootNode);
     	
@@ -136,6 +149,8 @@ public class Board extends GridPane {
     private void buildFutureTree(int maxDepth, FutureBoard parentBoard) {
     	// figures out a list of all possible moves from the parentBoard
     	UpdateStateResult res = parentBoard.updateState(true, parentBoard.player);
+
+    	parentBoard.possible_moves = res.possible_moves;
     	
     	if (parentBoard.depth >= maxDepth) {
     		return;
@@ -157,7 +172,7 @@ public class Board extends GridPane {
     		
     		// ----- CLONE THE PARENT BOARD AND CREATE/ADD THE CHILD
     		
-    		FutureBoard childBoard = parentBoard.cloneBoard(next_depth, nextDepthPlayer);
+    		FutureBoard childBoard = parentBoard.cloneBoard(next_depth, parentBoard, move, nextDepthPlayer);
     		
     		// claim the move
     		childBoard.spaces[move.row][move.column].claim(parentBoard.player);
