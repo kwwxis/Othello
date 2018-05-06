@@ -247,21 +247,28 @@ public class Board extends GridPane {
                 }
             }
         }
+        
+        boolean game_ended = false;
 
-        if (!soft && total_possible_score == 0) {
-            game.endGame();
+        if (total_possible_score == 0) {
+        	if (!soft) {
+                game.endGame();
+        	}
+            game_ended = true;
         }
         
-        return new UpdateStateResult(total_possible_score, possible_moves);
+        return new UpdateStateResult(total_possible_score, possible_moves, game_ended);
     }
     
     class UpdateStateResult {
     	public final int total_possible_score;
     	public final List<Space> possible_moves;
+    	public final boolean game_ended;
     	
-    	public UpdateStateResult(int total_possible_score, List<Space> possible_moves) {
+    	public UpdateStateResult(int total_possible_score, List<Space> possible_moves, boolean game_ended) {
     		this.total_possible_score = total_possible_score;
     		this.possible_moves = possible_moves;
+    		this.game_ended = game_ended;
     	}
     }
 

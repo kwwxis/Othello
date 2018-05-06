@@ -28,6 +28,10 @@ public class AI {
     public void moveAI() {
         final Board board = this.game.getBoard();
         final FutureBoard tree = board.buildFutureTree(MAX_DEPTH);
+        
+    	if (tree.possible_moves.isEmpty()) {
+    		return;
+    	}
 
         System.out.println("### Tree:");
         tree.print();
@@ -41,13 +45,17 @@ public class AI {
         System.out.println("### Future Board Final:");
         System.out.println(s);
         
-        if (s != null) {
-        	Platform.runLater(() -> {
-                new ConfirmMove(game.getBoard(), s);
-        	});
-        } else {
-        	System.out.println("This should never happen.");
+        if (s == null) {
+        	Space s0 = tree.possible_moves.get(0);
+        	
+        	s = board.spaces[s0.row][s0.column];
         }
+        
+        final Space chosen_move = s;
+        
+    	Platform.runLater(() -> {
+            new ConfirmMove(game.getBoard(), chosen_move);
+    	});
     }
     
     /**
@@ -71,6 +79,10 @@ public class AI {
     }
     
     int heuristicScore(Space s) {
+    	if (s.board == null) {
+    		return s.score;
+    	}
+    	
     	FutureBoard board = (FutureBoard) s.board;
     	return s.score + board.computer_score;
     }

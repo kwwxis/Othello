@@ -171,7 +171,7 @@ public class Game extends VBox {
      * @param extraMessage the custom message
      */
     public void endGame(String extraMessage) {
-    	this.aiTimer.setPaused(true);
+    	aiTimer.setActive(false);
     	
         int humanScore = board.calcScore(human.getColor());
         int skynetScore = board.calcScore(skynet.getColor());
@@ -219,8 +219,12 @@ public class Game extends VBox {
         
         this.showCurrentTurn();
 
-        this.board.updateState();
+        Board.UpdateStateResult res = this.board.updateState();
 
+        if (res.game_ended) {
+        	return;
+        }
+        
         if (!this.isHumanTurn) {
             aiTimer.setActive(true);
             this.ai.moveAI();
