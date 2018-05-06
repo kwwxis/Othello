@@ -21,27 +21,41 @@ public class ConfirmMove {
     	board.game.getTimer().setPaused(true);
         space.setClaimInProgress();
         
-        String playerName = board.game.getCurrentPlayer().getName();
-        
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirm " + playerName + "'s move");
-        alert.setHeaderText(playerName + "'s selected Move: " + space.toSimpleString());
-        alert.setContentText("Do you want to play this move?");
+        if (board.game.getCurrentPlayer() == board.game.getHumanPlayer()) {
+        	// Create YES/NO dialog for human player's move
+        	
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirm your move");
+            alert.setHeaderText("Your Selected Move: " + space.toSimpleString());
+            alert.setContentText("Do you want to play this move?");
 
-        ButtonType buttonYes = new ButtonType("Yes");
-        ButtonType buttonNo = new ButtonType("No");
+            ButtonType buttonYes = new ButtonType("Yes");
+            ButtonType buttonNo = new ButtonType("No");
 
-        alert.getButtonTypes().setAll(buttonYes, buttonNo);
+            alert.getButtonTypes().setAll(buttonYes, buttonNo);
 
-        Optional<ButtonType> result = alert.showAndWait();
+            Optional<ButtonType> result = alert.showAndWait();
 
-        if (result.get() == buttonYes) {
+            if (result.get() == buttonYes) {
+                space.claim();
+                board.game.nextTurn();
+            } else if (result.get() == buttonNo) {
+                space.unclaim();
+            	board.game.getTimer().setPaused(false);
+            }
+        } else {
+        	// Create OK dialog for computer's move
+        	
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Computer's move");
+            alert.setHeaderText(null);
+            alert.setContentText("Computer's Selected Move: " + space.toSimpleString());
+            alert.showAndWait();
+
             space.claim();
             board.game.nextTurn();
-        } else if (result.get() == buttonNo) {
-            space.unclaim();
-        	board.game.getTimer().setPaused(false);
         }
+        
     }
 
 }

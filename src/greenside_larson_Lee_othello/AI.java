@@ -33,7 +33,7 @@ public class AI {
         System.out.println(tree.possible_moves);
         
         System.out.println("### Future Board AB Prune:");
-        Space s = getTopSpace(maxVal2(tree, null, null));
+        Space s = getTopSpace(maxVal(tree, null, null));
         
         System.out.println("### Future Board Final:");
         System.out.println(s);
@@ -87,7 +87,7 @@ public class AI {
     	return new Space(); // creates a throwaway Space with a score of 0
     }
     
-    Space maxVal2(FutureBoard node, Integer alpha, Integer beta) {
+    Space maxVal(FutureBoard node, Integer alpha, Integer beta) {
     	Space v = createDummySpace();
     	
     	if (node.children.isEmpty()) {
@@ -96,7 +96,7 @@ public class AI {
     	}
     	
     	for (Map.Entry<Space, FutureBoard> child : node.children.entrySet()) {
-    		Space v1 = minVal2(child.getValue(), alpha, beta);
+    		Space v1 = minVal(child.getValue(), alpha, beta);
     		
     		if (v.isDummySpace() || v1.score > v.score) {
     			v = v1;
@@ -116,7 +116,7 @@ public class AI {
     	return v;
     }
 
-    Space minVal2(FutureBoard node, Integer alpha, Integer beta) {
+    Space minVal(FutureBoard node, Integer alpha, Integer beta) {
     	Space v = createDummySpace();
 
     	if (node.children.isEmpty()) {
@@ -125,7 +125,7 @@ public class AI {
     	}
     	
     	for (Map.Entry<Space, FutureBoard> child : node.children.entrySet()) {
-    		Space v1 = maxVal2(child.getValue(), alpha, beta);
+    		Space v1 = maxVal(child.getValue(), alpha, beta);
     		
     		if (v.isDummySpace() || v1.score < v.score) {
     			v = v1;
