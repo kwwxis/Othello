@@ -15,7 +15,8 @@ import java.util.Map;
  * @author Trevor Greenside
  */
 public class AI {
-
+	
+	private final int MAX_DEPTH = 3;
     private final Game game;
 
     public AI(Game game) {
@@ -26,9 +27,11 @@ public class AI {
     // Note: Timer is started in Game function nextTurn()
     public void moveAI() {
         final Board board = this.game.getBoard();
-        final int max_depth = 3;
-        final FutureBoard tree = board.buildFutureTree(max_depth);
+        final FutureBoard tree = board.buildFutureTree(MAX_DEPTH);
 
+        System.out.println("### Tree:");
+        tree.print();
+        
         System.out.println("### Possible Moves:");
         System.out.println(tree.possible_moves);
         
@@ -53,7 +56,7 @@ public class AI {
      * @param board
      * @return Space
      */
-    Space heuristic(FutureBoard board) {
+    Space heuristicDepthReached(FutureBoard board) {
     	Space maxSpace = createDummySpace();
     	int maxScore = 0;
     	
@@ -65,6 +68,11 @@ public class AI {
     	}
     	
     	return maxSpace;
+    }
+    
+    int heuristicScore(Space s) {
+    	FutureBoard board = (FutureBoard) s.board;
+    	return s.score + board.computer_score;
     }
     
     Space getTopSpace(Space s) {
@@ -92,24 +100,24 @@ public class AI {
     	
     	if (node.children.isEmpty()) {
     		// Reached bottom of branch
-    		return heuristic(node);
+    		return heuristicDepthReached(node);
     	}
     	
     	for (Map.Entry<Space, FutureBoard> child : node.children.entrySet()) {
     		Space v1 = minVal(child.getValue(), alpha, beta);
     		
-    		if (v.isDummySpace() || v1.score > v.score) {
+    		if (v.isDummySpace() || heuristicScore(v1) > heuristicScore(v)) {
     			v = v1;
     		}
     		
     		if (beta != null) {
-    			if (v1.score >= beta) {
+    			if (heuristicScore(v1) >= beta) {
     				return v;
     			}
     		}
     		
-    		if (alpha == null || v1.score > alpha) {
-    			alpha = v1.score;
+    		if (alpha == null || heuristicScore(v1) > alpha) {
+    			alpha = heuristicScore(v1);
     		}
     	}
     	
@@ -121,24 +129,24 @@ public class AI {
 
     	if (node.children.isEmpty()) {
     		// Reached bottom of branch
-    		return heuristic(node);
+    		return heuristicDepthReached(node);
     	}
     	
     	for (Map.Entry<Space, FutureBoard> child : node.children.entrySet()) {
     		Space v1 = maxVal(child.getValue(), alpha, beta);
     		
-    		if (v.isDummySpace() || v1.score < v.score) {
+    		if (v.isDummySpace() || heuristicScore(v1) < heuristicScore(v)) {
     			v = v1;
     		}
     		
     		if (alpha != null) {
-    			if (v1.score <= alpha) {
+    			if (heuristicScore(v1) <= alpha) {
     				return v;
     			}
     		}
     		
-    		if (beta == null || v1.score < beta) {
-    			beta = v1.score;
+    		if (beta == null || heuristicScore(v1) < beta) {
+    			beta = heuristicScore(v1);
     		}
     	}
     	

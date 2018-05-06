@@ -69,6 +69,11 @@ public class Board extends GridPane {
     	private final Board source;
     	
     	/**
+    	 * Total score of the computer AI.
+    	 */
+    	protected int computer_score = 0;
+    	
+    	/**
     	 * The parent FutureBoard node, null if current FutureBoard is root node.
     	 */
     	protected final FutureBoard parent;
@@ -126,7 +131,8 @@ public class Board extends GridPane {
 		public void print() {
 			System.out.println(
 					"Depth: " + depth +
-					", Num Children: " + children.size()
+					", Num Children: " + children.size() +
+					", Computer Score: " + this.computer_score
 				);
 			
 			for (FutureBoard child : children.values()) {
@@ -140,6 +146,8 @@ public class Board extends GridPane {
     	// root node depth -> 0
     	// root node parent -> null
     	FutureBoard rootNode = new FutureBoard(this, null, null, 0, this.game.getCurrentPlayer());
+    	
+    	rootNode.computer_score = rootNode.calcScore(this.game.getComputerPlayer().getColor());
     	
     	buildFutureTree(maxDepth, rootNode);
     	
@@ -176,6 +184,8 @@ public class Board extends GridPane {
     		
     		// claim the move
     		childBoard.spaces[move.row][move.column].claim(parentBoard.player);
+    		
+    		childBoard.computer_score = childBoard.calcScore(this.game.getComputerPlayer().getColor());
     		
     		// add the child to the parent board's children
     		parentBoard.children.put(move, childBoard);
