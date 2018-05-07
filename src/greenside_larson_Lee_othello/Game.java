@@ -48,7 +48,7 @@ public class Game extends VBox {
     // buttons
     private final Button undo;
     private final Button restartButton;
-    
+
     private final GameTimer aiTimer;
 
     public Game(Othello othelloMain, PlayerStartMenu startConfig) {
@@ -79,8 +79,8 @@ public class Game extends VBox {
 
         restartButton = new Button("Restart game");
         restartButton.setOnAction((ActionEvent e) -> {
-        	this.aiTimer.setPaused(true);
-        	
+            this.aiTimer.setPaused(true);
+
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Restart game");
             alert.setHeaderText(null);
@@ -90,7 +90,7 @@ public class Game extends VBox {
             if (result.get() == ButtonType.OK) {
                 restart();
             } else {
-            	this.aiTimer.setPaused(false);
+                this.aiTimer.setPaused(false);
             }
         });
 
@@ -102,12 +102,12 @@ public class Game extends VBox {
         this.showCurrentTurn();
 
         this.board.updateState();
-        
+
         Platform.runLater(() -> {
-        	// make sure initial call to nextTurn() runs inside runLater()
-        	// so that the GUI can update and the board will be visible when
-        	// nextTurn() is called
-        	this.nextTurn(true);
+            // make sure initial call to nextTurn() runs inside runLater()
+            // so that the GUI can update and the board will be visible when
+            // nextTurn() is called
+            this.nextTurn(true);
         });
     }
 
@@ -121,9 +121,9 @@ public class Game extends VBox {
 
         this.getChildren().addAll(playerStatusPane, board, buttons);
     }
-    
+
     public GameTimer getTimer() {
-    	return this.aiTimer;
+        return this.aiTimer;
     }
 
     public Scene getGameScene() {
@@ -133,13 +133,13 @@ public class Game extends VBox {
     public Player getCurrentPlayer() {
         return this.isHumanTurn ? human : skynet;
     }
-    
+
     public Player getHumanPlayer() {
-    	return human;
+        return human;
     }
-    
+
     public Player getComputerPlayer() {
-    	return skynet;
+        return skynet;
     }
 
     public int getCurrentTurn() {
@@ -154,25 +154,25 @@ public class Game extends VBox {
      * Restarts the game
      */
     public void restart() {
-    	this.aiTimer.setPaused(true);
+        this.aiTimer.setPaused(true);
         othelloMain.restartGame();
     }
-    
+
     /**
      * End the game with the default message.
      */
     public void endGame() {
         endGame(null);
     }
-    
+
     /**
      * End the game with a custom message.
-     * 
+     *
      * @param extraMessage the custom message
      */
     public void endGame(String extraMessage) {
-    	aiTimer.setActive(false);
-    	
+        aiTimer.setActive(false);
+
         int humanScore = board.calcScore(human.getColor());
         int skynetScore = board.calcScore(skynet.getColor());
 
@@ -206,30 +206,30 @@ public class Game extends VBox {
     }
 
     public void nextTurn() {
-    	nextTurn(false);
+        nextTurn(false);
     }
-    
+
     private void nextTurn(boolean afterRewind) {
         this.calcScore();
-        
+
         if (!afterRewind) {
             this.isHumanTurn = !this.isHumanTurn;
             this.currentTurn++;
         }
-        
+
         this.showCurrentTurn();
 
         Board.UpdateStateResult res = this.board.updateState();
 
         if (res.game_ended) {
-        	return;
+            return;
         }
-        
+
         if (!this.isHumanTurn) {
             aiTimer.setActive(true);
             this.ai.moveAI();
         } else {
-        	aiTimer.setActive(false);
+            aiTimer.setActive(false);
         }
     }
 
@@ -273,7 +273,7 @@ public class Game extends VBox {
                 // if odd
                 this.isHumanTurn = humanIsBLACK;
             }
-            
+
             this.nextTurn(true);
         });
     }
@@ -297,5 +297,5 @@ public class Game extends VBox {
         human.updateScore(humanScore);
         skynet.updateScore(skynetScore);
     }
-   
+
 }

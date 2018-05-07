@@ -23,7 +23,7 @@ import javafx.scene.paint.Color;
 public class Board extends GridPane {
 
     public final int DIMENSION;
-    
+
     protected final Space[][] spaces;
     protected final Game game;
 
@@ -39,162 +39,164 @@ public class Board extends GridPane {
                 this.spaces[i][j].setOnMouseClicked(new BoardEventHandler(spaces[i][j], this));
             }
         }
-        
+
         if (isConfigWBWB) {
             this.spaces[3][3].setWhiteInitial();
             this.spaces[4][4].setWhiteInitial();
             this.spaces[3][4].setBlackInitial();
             this.spaces[4][3].setBlackInitial();
         } else {
-        	this.spaces[3][3].setBlackInitial();
-        	this.spaces[4][4].setBlackInitial();
-        	this.spaces[3][4].setWhiteInitial();
-        	this.spaces[4][3].setWhiteInitial();
+            this.spaces[3][3].setBlackInitial();
+            this.spaces[4][4].setBlackInitial();
+            this.spaces[3][4].setWhiteInitial();
+            this.spaces[4][3].setWhiteInitial();
         }
     }
-    
+
     public Board(Board board) {
         this.game = board.game;
-    	this.DIMENSION = board.DIMENSION;
+        this.DIMENSION = board.DIMENSION;
         this.spaces = new Space[this.DIMENSION][this.DIMENSION];
-        
+
         for (int i = 0; i < this.DIMENSION; i++) {
             for (int j = 0; j < this.DIMENSION; j++) {
-            	this.spaces[i][j] = board.spaces[i][j].cloneSpace(this);
+                this.spaces[i][j] = board.spaces[i][j].cloneSpace(this);
             }
         }
     }
-    
+
     public class FutureBoard extends Board {
-    	private final Board source;
-    	
-    	/**
-    	 * Total score of the computer AI.
-    	 */
-    	protected int computer_score = 0;
-    	
-    	/**
-    	 * The parent FutureBoard node, null if current FutureBoard is root node.
-    	 */
-    	protected final FutureBoard parent;
-    	
-    	/**
-    	 * The move from the parent that led to this FutureBoard
-    	 */
-    	protected final Space parentSpace;
-    	
-    	/**
-    	 * Children FutureBoards. Dictionary from possible move Space to child FutureBoard that
-    	 * would result from scoring with that Space.
-    	 */
-    	protected final Map<Space, FutureBoard> children;
-    	
-    	/**
-    	 * Possibles moves. Unless if the depth limit is reached, the "children" field should
-    	 * have its keyset exactly the same as this list.
-    	 */
-    	protected List<Space> possible_moves;
-    	
-    	/**
-    	 * The incremental depth. The root node is always 0
-    	 */
-    	protected final int depth;
-    	
-    	/**
-    	 * The player who would have the current turn at the depth of this FutureBoard.
-    	 */
-    	protected final Player player;
 
-		public FutureBoard(Board source, FutureBoard parent, Space parentSpace, int depth, Player player) {
-			super(source);
-			this.source = source;
-			this.parent = parent;
-			this.parentSpace = parentSpace;
-			this.depth = depth;
-			this.player = player;
-			this.children = new HashMap<Space, FutureBoard>();
-			this.possible_moves = new ArrayList<Space>();
-		}
-		
-		public boolean hasParent() {
-			return this.parent != null;
-		}
-		
-		public boolean hasChildren() {
-			return !this.children.isEmpty();
-		}
-		
-		public FutureBoard cloneBoard(int new_depth, FutureBoard parentBoard, Space parentSpace, Player player) {
-			return new FutureBoard(this.source, parentBoard, parentSpace, new_depth, player);
-		}
-		
-		public void print() {
-			System.out.println(
-					"Depth: " + depth +
-					", Num Children: " + children.size() +
-					", Computer Score: " + this.computer_score
-				);
-			
-			for (FutureBoard child : children.values()) {
-				child.print();
-			}
-		}
-    	
+        private final Board source;
+
+        /**
+         * Total score of the computer AI.
+         */
+        protected int computer_score = 0;
+
+        /**
+         * The parent FutureBoard node, null if current FutureBoard is root
+         * node.
+         */
+        protected final FutureBoard parent;
+
+        /**
+         * The move from the parent that led to this FutureBoard
+         */
+        protected final Space parentSpace;
+
+        /**
+         * Children FutureBoards. Dictionary from possible move Space to child
+         * FutureBoard that would result from scoring with that Space.
+         */
+        protected final Map<Space, FutureBoard> children;
+
+        /**
+         * Possibles moves. Unless if the depth limit is reached, the "children"
+         * field should have its keyset exactly the same as this list.
+         */
+        protected List<Space> possible_moves;
+
+        /**
+         * The incremental depth. The root node is always 0
+         */
+        protected final int depth;
+
+        /**
+         * The player who would have the current turn at the depth of this
+         * FutureBoard.
+         */
+        protected final Player player;
+
+        public FutureBoard(Board source, FutureBoard parent, Space parentSpace, int depth, Player player) {
+            super(source);
+            this.source = source;
+            this.parent = parent;
+            this.parentSpace = parentSpace;
+            this.depth = depth;
+            this.player = player;
+            this.children = new HashMap<Space, FutureBoard>();
+            this.possible_moves = new ArrayList<Space>();
+        }
+
+        public boolean hasParent() {
+            return this.parent != null;
+        }
+
+        public boolean hasChildren() {
+            return !this.children.isEmpty();
+        }
+
+        public FutureBoard cloneBoard(int new_depth, FutureBoard parentBoard, Space parentSpace, Player player) {
+            return new FutureBoard(this.source, parentBoard, parentSpace, new_depth, player);
+        }
+
+        public void print() {
+            System.out.println(
+                    "Depth: " + depth
+                    + ", Num Children: " + children.size()
+                    + ", Computer Score: " + this.computer_score
+            );
+
+            for (FutureBoard child : children.values()) {
+                child.print();
+            }
+        }
+
     }
-    
+
     protected FutureBoard buildFutureTree(int maxDepth) {
-    	// root node depth -> 0
-    	// root node parent -> null
-    	FutureBoard rootNode = new FutureBoard(this, null, null, 0, this.game.getCurrentPlayer());
-    	
-    	rootNode.computer_score = rootNode.calcScore(this.game.getComputerPlayer().getColor());
-    	
-    	buildFutureTree(maxDepth, rootNode);
-    	
-    	return rootNode;
-    }
-    
-    private void buildFutureTree(int maxDepth, FutureBoard parentBoard) {
-    	// figures out a list of all possible moves from the parentBoard
-    	UpdateStateResult res = parentBoard.updateState(true, parentBoard.player);
+        // root node depth -> 0
+        // root node parent -> null
+        FutureBoard rootNode = new FutureBoard(this, null, null, 0, this.game.getCurrentPlayer());
 
-    	parentBoard.possible_moves = res.possible_moves;
-    	
-    	if (parentBoard.depth >= maxDepth) {
-    		return;
-    	}
-    	
-    	// next depth for child boards
-    	int next_depth = parentBoard.depth + 1;
-    	
-    	for (Space move : res.possible_moves) {
-    		// ----- FIGURE OUT PLAYER FOR NEXT CHILD DEPTH
-    		
-    		Player nextDepthPlayer;
-    		// alternate between players for depths
-    		if (parentBoard.player == this.game.getHumanPlayer()) {
-    			nextDepthPlayer = this.game.getComputerPlayer();
-    		} else {
-    			nextDepthPlayer = this.game.getHumanPlayer();
-    		}
-    		
-    		// ----- CLONE THE PARENT BOARD AND CREATE/ADD THE CHILD
-    		
-    		FutureBoard childBoard = parentBoard.cloneBoard(next_depth, parentBoard, move, nextDepthPlayer);
-    		
-    		// claim the move
-    		childBoard.spaces[move.row][move.column].claim(parentBoard.player);
-    		
-    		childBoard.computer_score = childBoard.calcScore(this.game.getComputerPlayer().getColor());
-    		
-    		// add the child to the parent board's children
-    		parentBoard.children.put(move, childBoard);
-    		
-    		// recursive call
-    		buildFutureTree(maxDepth, childBoard);
-    	}
+        rootNode.computer_score = rootNode.calcScore(this.game.getComputerPlayer().getColor());
+
+        buildFutureTree(maxDepth, rootNode);
+
+        return rootNode;
     }
-    
+
+    private void buildFutureTree(int maxDepth, FutureBoard parentBoard) {
+        // figures out a list of all possible moves from the parentBoard
+        UpdateStateResult res = parentBoard.updateState(true, parentBoard.player);
+
+        parentBoard.possible_moves = res.possible_moves;
+
+        if (parentBoard.depth >= maxDepth) {
+            return;
+        }
+
+        // next depth for child boards
+        int next_depth = parentBoard.depth + 1;
+
+        for (Space move : res.possible_moves) {
+            // ----- FIGURE OUT PLAYER FOR NEXT CHILD DEPTH
+
+            Player nextDepthPlayer;
+            // alternate between players for depths
+            if (parentBoard.player == this.game.getHumanPlayer()) {
+                nextDepthPlayer = this.game.getComputerPlayer();
+            } else {
+                nextDepthPlayer = this.game.getHumanPlayer();
+            }
+
+            // ----- CLONE THE PARENT BOARD AND CREATE/ADD THE CHILD
+            FutureBoard childBoard = parentBoard.cloneBoard(next_depth, parentBoard, move, nextDepthPlayer);
+
+            // claim the move
+            childBoard.spaces[move.row][move.column].claim(parentBoard.player);
+
+            childBoard.computer_score = childBoard.calcScore(this.game.getComputerPlayer().getColor());
+
+            // add the child to the parent board's children
+            parentBoard.children.put(move, childBoard);
+
+            // recursive call
+            buildFutureTree(maxDepth, childBoard);
+        }
+    }
+
     public boolean isInBounds(int row, int column) {
         return row >= 0 && column >= 0 && row < DIMENSION && column < DIMENSION;
     }
@@ -206,19 +208,20 @@ public class Board extends GridPane {
             }
         }
     }
-    
+
     protected UpdateStateResult updateState() {
-    	return updateState(false, game.getCurrentPlayer());
+        return updateState(false, game.getCurrentPlayer());
     }
-    
+
     /**
      * Update the state of the Board.
-     * 
-     * @param soft if true, no changes to the Game state will be made based on the result of this function
+     *
+     * @param soft if true, no changes to the Game state will be made based on
+     * the result of this function
      * @return UpdateStateResult
      */
     protected UpdateStateResult updateState(boolean soft, Player currentPlayer) {
-    	List<Space> possible_moves = new ArrayList<Space>();
+        List<Space> possible_moves = new ArrayList<Space>();
         int total_possible_score = 0;
 
         for (int i = 0; i < DIMENSION; i++) {
@@ -237,7 +240,7 @@ public class Board extends GridPane {
                 }
 
                 space.score = this.claimSurrounding(space, true, currentPlayer.getColor());
-                
+
                 if (space.isClaimable()) {
                     space.setAvailable(true);
                     total_possible_score += space.score;
@@ -247,29 +250,30 @@ public class Board extends GridPane {
                 }
             }
         }
-        
+
         boolean game_ended = false;
 
         if (total_possible_score == 0) {
-        	if (!soft) {
+            if (!soft) {
                 game.endGame();
-        	}
+            }
             game_ended = true;
         }
-        
+
         return new UpdateStateResult(total_possible_score, possible_moves, game_ended);
     }
-    
+
     class UpdateStateResult {
-    	public final int total_possible_score;
-    	public final List<Space> possible_moves;
-    	public final boolean game_ended;
-    	
-    	public UpdateStateResult(int total_possible_score, List<Space> possible_moves, boolean game_ended) {
-    		this.total_possible_score = total_possible_score;
-    		this.possible_moves = possible_moves;
-    		this.game_ended = game_ended;
-    	}
+
+        public final int total_possible_score;
+        public final List<Space> possible_moves;
+        public final boolean game_ended;
+
+        public UpdateStateResult(int total_possible_score, List<Space> possible_moves, boolean game_ended) {
+            this.total_possible_score = total_possible_score;
+            this.possible_moves = possible_moves;
+            this.game_ended = game_ended;
+        }
     }
 
     /**
@@ -537,12 +541,12 @@ public class Board extends GridPane {
                 }
             }
         }
-        
+
         if (score != 0) {
-        	// the score so far only accounts for the spaces surrounding the space that
-        	// was clicked, so add 1 to account for self (the space that was clicked)
-        	// if there is a score
-        	score += 1;
+            // the score so far only accounts for the spaces surrounding the space that
+            // was clicked, so add 1 to account for self (the space that was clicked)
+            // if there is a score
+            score += 1;
         }
 
         return score;

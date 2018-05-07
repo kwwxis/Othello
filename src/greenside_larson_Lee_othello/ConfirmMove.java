@@ -18,12 +18,12 @@ import javafx.scene.control.ButtonType;
 public class ConfirmMove {
 
     public ConfirmMove(Board board, Space space) {
-    	board.game.getTimer().setPaused(true);
+        board.game.getTimer().setPaused(true);
         space.setClaimInProgress();
-        
+
         if (board.game.getCurrentPlayer() == board.game.getHumanPlayer()) {
-        	// Create YES/NO dialog for human player's move
-        	
+            // Create YES/NO dialog for human player's move
+
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Confirm your move");
             alert.setHeaderText("Your Selected Move: " + space.toSimpleString());
@@ -37,15 +37,17 @@ public class ConfirmMove {
             Optional<ButtonType> result = alert.showAndWait();
 
             if (result.get() == buttonYes) {
+                alert.hide();
                 space.claim();
                 board.game.nextTurn();
             } else if (result.get() == buttonNo) {
+                alert.hide();
                 space.unclaim();
-            	board.game.getTimer().setPaused(false);
+                board.game.getTimer().setPaused(true);
             }
         } else {
-        	// Create OK dialog for computer's move
-        	
+            // Create OK dialog for computer's move
+
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Computer's move");
             alert.setHeaderText(null);
@@ -55,7 +57,7 @@ public class ConfirmMove {
             space.claim();
             board.game.nextTurn();
         }
-        
+
     }
 
 }

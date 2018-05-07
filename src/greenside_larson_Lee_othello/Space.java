@@ -50,41 +50,41 @@ public class Space extends Rectangle {
         this.setStroke(Color.GRAY);
         this.unclaim();
     }
-    
+
     protected Space() {
-    	this.row = -1;
-    	this.column = -1;
-    	this.rowName = null;
-    	this.columnName = null;
-    	this.game = null;
-    	this.board = null;
-    	this.history = null;
-    	this.score = 0;
+        this.row = -1;
+        this.column = -1;
+        this.rowName = null;
+        this.columnName = null;
+        this.game = null;
+        this.board = null;
+        this.history = null;
+        this.score = 0;
     }
-    
+
     protected boolean isDummySpace() {
-    	return this.game == null && this.board == null;
+        return this.game == null && this.board == null;
     }
-    
+
     private Space(Space space, Board board) {
         this.row = space.row;
         this.column = space.column;
         this.rowName = space.rowName;
         this.columnName = space.columnName;
-        
-    	this.game = space.game;
-    	this.board = board;
-    	this.history = null;
-    	
-    	this.score = space.score;
-    	this.color = space.color;
+
+        this.game = space.game;
+        this.board = board;
+        this.history = null;
+
+        this.score = space.score;
+        this.color = space.color;
     }
-    
+
     /**
      * Clone this Space but without history.
      */
     public Space cloneSpace(Board board) {
-    	return new Space(this, board);
+        return new Space(this, board);
     }
 
     protected void rewind(int turn) {
@@ -123,10 +123,10 @@ public class Space extends Rectangle {
     }
 
     private void updateHistory() {
-    	if (this.history == null) {
-    		return;
-    	}
-    	
+        if (this.history == null) {
+            return;
+        }
+
         // update history to current color
         // usage of this method must come after setFill()
         this.history.put(game.getCurrentTurn(), color);
@@ -159,9 +159,9 @@ public class Space extends Rectangle {
     public int getClaimScore() {
         return this.score;
     }
-    
+
     protected void claim(Player player) {
-    	claimBasic(false, player);
+        claimBasic(false, player);
     }
 
     private void claimBasic(boolean single, Player player) {
@@ -170,16 +170,16 @@ public class Space extends Rectangle {
         this.updateHistory();
 
         if (!single) {
-        	this.board.claimSurrounding(this, false, this.color);
+            this.board.claimSurrounding(this, false, this.color);
         }
     }
 
     protected void claimSingle() {
-    	claimBasic(true, this.game.getCurrentPlayer());
+        claimBasic(true, this.game.getCurrentPlayer());
     }
 
     public void claim() {
-    	claimBasic(false, this.game.getCurrentPlayer());
+        claimBasic(false, this.game.getCurrentPlayer());
     }
 
     /**
@@ -187,8 +187,9 @@ public class Space extends Rectangle {
      */
     public void setBlackInitial() {
         this.setFill(color = Color.BLACK);
-        if (this.history != null)
-        	this.history.put(0, color);
+        if (this.history != null) {
+            this.history.put(0, color);
+        }
     }
 
     /**
@@ -196,31 +197,32 @@ public class Space extends Rectangle {
      */
     public void setWhiteInitial() {
         this.setFill(color = Color.WHITE);
-        if (this.history != null)
-        	this.history.put(0, color);
+        if (this.history != null) {
+            this.history.put(0, color);
+        }
     }
 
     public void unclaim() {
-        this.setFill(color = INITIAL_COLOR);
+        this.setFill(color = AVAILABLE_COLOR);
         this.updateHistory();
     }
 
     public Color getColor() {
         return this.color;
     }
-    
+
     public String toSimpleString() {
-    	return this.columnName + "-" + this.rowName;
+        return this.columnName + "-" + this.rowName;
     }
 
     @Override
     public String toString() {
-        String s = "<" + this.columnName + "-" + this.rowName + ", Score:"+this.score;
+        String s = "<" + this.columnName + "-" + this.rowName + ", Score:" + this.score;
         if (this.board != null && this.board instanceof Board.FutureBoard) {
-        	s += ", Depth:" + ((Board.FutureBoard) this.board).depth;
+            s += ", Depth:" + ((Board.FutureBoard) this.board).depth;
         }
         if (this.isDummySpace()) {
-        	s += ", (dummy space)";
+            s += ", (dummy space)";
         }
         return s + ">";
     }

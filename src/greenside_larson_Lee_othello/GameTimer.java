@@ -17,19 +17,19 @@ import javafx.util.Duration;
  * @author Trevor Greenside
  */
 public class GameTimer extends Label {
-	
-	private final String LABEL_PREFIX;
+
+    private final String LABEL_PREFIX;
     private final Game game;
     private final int START;
     private final Timeline decrementer;
-    
+
     private int remaining;
 
     public GameTimer(Game game, int startTime) {
-        this.game 			= game;
-        this.START 			= startTime;
-        this.remaining 		= START;
-        this.LABEL_PREFIX 	= "AI Time: ";
+        this.game = game;
+        this.START = startTime;
+        this.remaining = START;
+        this.LABEL_PREFIX = "AI Time: ";
 
         this.setText(LABEL_PREFIX + Integer.toString(START));
         this.setPadding(new Insets(5, 5, 5, 10));
@@ -39,23 +39,23 @@ public class GameTimer extends Label {
         }));
         decrementer.setCycleCount(Timeline.INDEFINITE);
     }
-    
+
     public void setActive(boolean newState) {
-    	if (newState) {
+        if (newState) {
             this.timeReset();
-    	} else {
-    		this.timeReset();
-    		this.timePause();
-    		this.setText(LABEL_PREFIX + "n/a");
-    	}
+        } else {
+            this.timeReset();
+            this.timePause();
+            this.setText(LABEL_PREFIX + "n/a");
+        }
     }
-    
+
     public void setPaused(boolean newState) {
-    	if (newState) {
-    		this.timePause();
-    	} else {
-    		this.timeResume();
-    	}
+        if (newState) {
+            this.timePause();
+        } else {
+            this.timeResume();
+        }
     }
 
     private void timeReset() {
