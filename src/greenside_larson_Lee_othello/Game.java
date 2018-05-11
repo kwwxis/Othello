@@ -228,7 +228,12 @@ public class Game extends VBox {
         if (!this.isHumanTurn) {
             aiTimer.setActive(true);
             Platform.runLater(() -> {
-                Game.this.ai.moveAI();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        Game.this.ai.moveAI();
+                    }
+                }.start();
             });
         } else {
             aiTimer.setActive(false);

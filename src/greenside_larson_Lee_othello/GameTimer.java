@@ -8,6 +8,7 @@ package greenside_larson_Lee_othello;
 import javafx.scene.control.Label;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.util.Duration;
@@ -70,7 +71,9 @@ public class GameTimer extends Label {
 
     private void timeDecrement() {
         remaining--;
-        this.setText(LABEL_PREFIX + Integer.toString(remaining));
+        Platform.runLater(() -> {
+            GameTimer.this.setText(LABEL_PREFIX + Integer.toString(remaining));
+        });
         if (remaining == 0) {
             decrementer.stop();
             game.endGame(game.getCurrentPlayer().getName() + " ran out of time.");
