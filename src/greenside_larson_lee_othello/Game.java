@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package greenside_larson_lee_othello;
 
 import java.util.Optional;
@@ -24,6 +19,8 @@ import javafx.scene.paint.Color;
 /**
  *
  * @author Trevor Greenside
+ * @author Kayla Larson
+ * @author Matthew Lee
  */
 public class Game extends VBox {
     // gui parent objects
