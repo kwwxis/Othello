@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package greenside_larson_Lee_othello;
+package greenside_larson_lee_othello;
 
-import greenside_larson_Lee_othello.Board.FutureBoard;
 import javafx.application.Platform;
 
 import java.util.Map;
+
+import greenside_larson_lee_othello.Board.FutureBoard;
 
 /**
  *
