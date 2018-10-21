@@ -17,6 +17,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 /**
+ * The screen for the actual game. Once the user is out of the PlayerStartMenu screen, this screen
+ * is loaded in.
  *
  * @author Trevor Greenside
  * @author Kayla Larson

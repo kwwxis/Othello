@@ -6,7 +6,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
 /**
- *
+ * Human player object, including the GUI.
+ * 
  * @author Trevor Greenside
  * @author Kayla Larson
  * @author Matthew Lee

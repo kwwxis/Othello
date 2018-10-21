@@ -6,7 +6,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 
 /**
- *
+ * Handles board click events.
+ * 
  * @author Trevor Greenside
  * @author Kayla Larson
  * @author Matthew Lee

@@ -11,7 +11,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 /**
- *
+ * The config menu for starting a game, includes choosing player name, color, and starting configuration.
+ * 
  * @author Trevor Greenside
  * @author Kayla Larson
  * @author Matthew Lee

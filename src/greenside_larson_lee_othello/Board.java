@@ -12,7 +12,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 /**
- *
+ * The board container and logic.
+ * 
  * @author Trevor Greenside
  * @author Kayla Larson
  * @author Matthew Lee

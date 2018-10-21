@@ -7,7 +7,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 
 /**
- *
+ * Move confirmation alerts.
+ * 
  * @author Trevor Greenside
  * @author Kayla Larson
  * @author Matthew Lee

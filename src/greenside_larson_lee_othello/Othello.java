@@ -8,7 +8,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 /**
- *
+ * The entrypoint class. Initialized the window with the PlayerStartMenu class as the first screen.
+ * 
  * @author Trevor Greenside
  * @author Kayla Larson
  * @author Matthew Lee

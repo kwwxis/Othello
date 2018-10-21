@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
+ * An item within the game grid.
+ * 
  * @author Trevor Greenside
  * @author Kayla Larson
  * @author Matthew Lee

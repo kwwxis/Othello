@@ -9,7 +9,9 @@ import javafx.geometry.Insets;
 import javafx.util.Duration;
 
 /**
- *
+ * The game timer class, counts how much time the player has left to make a move
+ * and ends the game if time runs out.
+ * 
  * @author Trevor Greenside
  * @author Kayla Larson
  * @author Matthew Lee
