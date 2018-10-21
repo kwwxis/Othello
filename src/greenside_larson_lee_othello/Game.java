@@ -73,7 +73,7 @@ public class Game extends VBox {
         // initialize undo button
         undo = new Button("Undo previous turn");
         undo.setOnAction((ActionEvent e) -> {
-            rewind(-1);
+            rewind(-2);
         });
 
         restartButton = new Button("Restart game");
